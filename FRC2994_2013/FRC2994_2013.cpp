@@ -23,6 +23,7 @@ class RobotDemo : public SimpleRobot
 	Compressor compressor;
 	AnalogChannel potentiometer;
 	DriverStationLCD *dsLCD;
+	Jaguar motorController;
 
 public:
 	RobotDemo(void):
@@ -34,7 +35,8 @@ public:
 		armMotor(7),
 		shifter(7,8),
 		compressor(5, 5),
-		potentiometer(6)
+		potentiometer(6),
+		motorController(7)
 	{
 		
 		dsLCD = DriverStationLCD::GetInstance();
@@ -73,8 +75,9 @@ public:
 
 	void HandleDriverInputsAutomatic(void)
 	{
-		myRobot.ArcadeDrive(stick);
-		if((DoubleSolenoid::kReverse) == shifter.Get())
+		//myRobot.ArcadeDrive(stick);
+		
+		if(DoubleSolenoid::kReverse == shifter.Get())
 		{
 			if(stick.GetY() < -0.25)
 			{
@@ -87,16 +90,36 @@ public:
 		{
 			shifter.Set(DoubleSolenoid::kReverse);
 		}
-		// If the robot is in high gear and under 0.15 input,
-		// switch the robot into low gear.
 		
-		//if (DoubleSolenoid::kReverse == shifter.Get())
-		//{
-		//	stick.GetY() * 5;
-		//}
-		// If robot is in low gear multiply the input by 5
-		// to get full access of the low gear.
+		SquareInputs();
 	}
+	
+	void SquareInputs(void)
+	{
+		if(stick.GetY() < 0)
+		{
+			if(DoubleSolenoid::kReverse == shifter.Get())
+			{
+				motorController.Set((stick.GetY() * stick.GetY()) * -4.0);
+			}
+			else if(DoubleSolenoid::kForward == shifter.Get())
+			{
+				motorController.Set((stick.GetY() * stick.GetY()) * -1.0);
+			}
+		}
+		else if(stick.GetY() > 0)
+		{
+			if(DoubleSolenoid::kReverse == shifter.Get())
+			{
+				motorController.Set((stick.GetY() * stick.GetY()) * 4.0);
+			}
+			else if(DoubleSolenoid::kForward == shifter.Get())
+			{
+				motorController.Set(stick.GetY() * stick.GetY());
+			}
+		}
+	}
+	
 	void HandleArmInputs(void)
 	{
 		if (gamepad.GetLeftY() < -0.1)
