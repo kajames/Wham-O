@@ -28,6 +28,7 @@ typedef struct
 //#define WHAMO2
 
 #ifdef PLYBOY
+#define NAME "Plyboy"
 #define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
@@ -35,6 +36,7 @@ typedef struct
 #endif
 
 #ifdef WHAMO1
+#define NAME "WhamO-1"
 #define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
@@ -42,6 +44,7 @@ typedef struct
 #endif
 
 #ifdef WHAMO2
+#define NAME "WhamO-2"
 #define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
