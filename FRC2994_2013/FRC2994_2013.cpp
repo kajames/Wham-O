@@ -25,7 +25,7 @@ class RobotDemo : public SimpleRobot
 	Compressor compressor;
 	AnalogChannel potentiometer;
 	Talon motorController;
-	EDigitalInput index_switch;
+	EDigitalInput indexSwitch;
 	Jaguar indexer;
 	Jaguar shooter;
 	
@@ -47,7 +47,7 @@ public:
 		compressor(COMPRESSOR_PRESSURE_SW, COMPRESSOR_SPIKE),
 		potentiometer(ARM_ROTATION_POT),
 		motorController(6),
-		index_switch(INDEXER_SW),
+		indexSwitch(INDEXER_SW),
 		indexer(INDEX_JAG),
 		shooter(SHOOTER_JAG)
 	{
@@ -226,7 +226,7 @@ public:
 		}
 		else	
 		{
-			if (index_switch.GetEvent() == kEventClosed)
+			if (indexSwitch.GetEvent() == kEventClosed)
 			{
 				indexer.Set(0.0);
 				shooter.Set(0.0);
@@ -249,7 +249,7 @@ public:
 		gamepad.EnableButton(BUTTON_CLAW_2_UNLOCKED);
 		gamepad.Update();
 		
-		index_switch.Update();
+		indexSwitch.Update();
 		
 		stick2.EnableButton(BUTTON_SHIFT);
 		stick2.Update();
@@ -263,7 +263,7 @@ public:
 		{
 			gamepad.Update();
 			stick2.Update();
-			index_switch.Update();
+			indexSwitch.Update();
 			//myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
 			HandleCollectorInputs();
 			HandleDriverInputsManual();
