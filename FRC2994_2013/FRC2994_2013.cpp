@@ -6,50 +6,57 @@
 #include "Ejoystick.h"
 
 /**
- * This is a demo program showing the use of the RobotBase class.
- * The SimpleRobot class is the base of a robot application that will automatically call your
- * Autonomous and OperatorControl methods at the right time as controlled by the switches on
- * the driver station or the field controls.
+ * This is Wham-O - the 2013 2994 Robot
  */ 
+
 class RobotDemo : public SimpleRobot
 {
 	RobotDrive myRobot; // robot drive system
-	Joystick stick; 
+	
+	// Input Devices
+	Joystick  stick; 
 	EJoystick stick2;
-	EGamepad gamepad; //gamepad
-	Talon collectorMotor;
-	Talon armMotor;
+	EGamepad  gamepad;
+	
+	// Motor Controllers (macros used because of differing hw on plyboy and bots)
+	COLLECTOR_MOTOR_CONTROLLER collectorMotor;
+	INDEXER_MOTOR_CONTROLLER   indexerMotor;
+	SHOOTER_MOTOR_CONTROLLER   shooterMotor;
+	ARM_MOTOR_CONTROLLER       armMotor;
+	
+	// Output Devices
 	DoubleSolenoid shifter;
 	DoubleSolenoid claw1;
 	DoubleSolenoid claw2;
-	Compressor compressor;
-	AnalogChannel potentiometer;
-	Talon motorController;
-	EDigitalInput indexSwitch;
-	Jaguar indexer;
-	Jaguar shooter;
 	
+	// Input sensors
+	AnalogChannel potentiometer;
+	EDigitalInput indexSwitch;
+	
+	// Miscellaneous
+	Compressor compressor;
+
+	// Nonobject members
 	bool m_collectorMotorRunning;
 	bool m_shooterMotorRunning;
 	DriverStationLCD *dsLCD;
 
 public:
 	RobotDemo(void):
-		myRobot(LEFT_DRIVE_VICTOR, RIGHT_DRIVE_VICTOR),	// these must be initialized in the same order
-		stick(1),		// as they are declared above.
+		myRobot(LEFT_DRIVE_PWM, RIGHT_DRIVE_PWM),	// these must be initialized in the same order
+		stick(1),									// as they are declared above.
 		stick2(2),
 		gamepad(3),
-		collectorMotor(PICKUP_JAG),
-		armMotor(ARM_TALON),
+		collectorMotor(PICKUP_PWM),
+		indexerMotor(INDEX_PWM),
+		shooterMotor(SHOOTER_PWM),
+		armMotor (ARM_PWM),
 		shifter(SHIFTER_A,SHIFTER_B),
 		claw1(CLAW_1_LOCKED, CLAW_1_UNLOCKED),
 		claw2(CLAW_2_LOCKED, CLAW_2_UNLOCKED),
-		compressor(COMPRESSOR_PRESSURE_SW, COMPRESSOR_SPIKE),
 		potentiometer(ARM_ROTATION_POT),
-		motorController(6),
 		indexSwitch(INDEXER_SW),
-		indexer(INDEX_JAG),
-		shooter(SHOOTER_JAG)
+		compressor(COMPRESSOR_PRESSURE_SW, COMPRESSOR_SPIKE)
 	{
 		m_collectorMotorRunning = false;
 		m_shooterMotorRunning = false;
@@ -114,22 +121,22 @@ public:
 		{
 			if(DoubleSolenoid::kReverse == shifter.Get())
 			{
-				motorController.Set((stick.GetY() * stick.GetY()) * -4.0);
+				myRobot.ArcadeDrive((stick.GetY() * stick.GetY() * -4.0), stick.GetX());
 			}
 			else if(DoubleSolenoid::kForward == shifter.Get())
 			{
-				motorController.Set((stick.GetY() * stick.GetY()) * -1.0);
+				myRobot.ArcadeDrive((stick.GetY() * stick.GetY() * -1.0), stick.GetX());
 			}
 		}
 		else if(stick.GetY() > 0)
 		{
 			if(DoubleSolenoid::kReverse == shifter.Get())
 			{
-				motorController.Set((stick.GetY() * stick.GetY()) * 4.0);
+				myRobot.ArcadeDrive((stick.GetY() * stick.GetY() * 4.0), stick.GetX());
 			}
 			else if(DoubleSolenoid::kForward == shifter.Get())
 			{
-				motorController.Set(stick.GetY() * stick.GetY());
+				myRobot.ArcadeDrive((stick.GetY() * stick.GetY() * 1.0), stick.GetX());
 			}
 		}
 	}
@@ -219,8 +226,8 @@ public:
 		{
 			if (kEventClosed == gamepad.GetEvent(BUTTON_SHOOTER))
 			{
-				shooter.Set(-0.5);
-				indexer.Set(-0.5);
+				shooterMotor.Set(-0.5);
+				indexerMotor.Set(-0.5);
 				m_shooterMotorRunning  = true;
 			}
 		}
@@ -228,8 +235,8 @@ public:
 		{
 			if (indexSwitch.GetEvent() == kEventClosed)
 			{
-				indexer.Set(0.0);
-				shooter.Set(0.0);
+				indexerMotor.Set(0.0);
+				shooterMotor.Set(0.0);
 				m_shooterMotorRunning  = false;
 
 			}
@@ -269,9 +276,7 @@ public:
 			HandleDriverInputsManual();
 			HandleArmInputs();
 			HandleShooterInputs();
-			dsLCD->PrintfLine(DriverStationLCD::kUser_Line2, "Voltage: %f", potentiometer.GetVoltage());
-			dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "Input: %f", motorController.Get());
-			dsLCD->UpdateLCD();
+			dsLCD->PrintfLine(DriverStationLCD::kUser_Line2, "Voltage: %f", potentiometer.GetVoltage());			dsLCD->UpdateLCD();
 			Wait(0.005);				// wait for a motor update time
 		}
 	}
