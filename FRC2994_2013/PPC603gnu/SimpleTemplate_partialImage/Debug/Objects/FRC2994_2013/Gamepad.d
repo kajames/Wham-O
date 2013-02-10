@@ -1,6 +1,6 @@
 SimpleTemplate_partialImage/Debug/Objects/FRC2994_2013/Gamepad.o:  \
- C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/Gamepad.cpp \
-  C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/Gamepad.h \
+ C:/Users/Home/git/Wham-O/FRC2994_2013/Gamepad.cpp \
+  C:/Users/Home/git/Wham-O/FRC2994_2013/Gamepad.h \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/Joystick.h \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/GenericHID.h \
   C:/WindRiver/vxworks-6.3/target/h/vxWorks.h \
@@ -150,7 +150,7 @@ SimpleTemplate_partialImage/Debug/Objects/FRC2994_2013/Gamepad.o:  \
   C:/WindRiver/vxworks-6.3/target/h/copyright_wrs.h \
   C:/WindRiver/vxworks-6.3/target/h/sys/taskDefs.h
 
-C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/Gamepad.h:
+C:/Users/Home/git/Wham-O/FRC2994_2013/Gamepad.h:
 
 C:/WindRiver/vxworks-6.3/target/h/WPILib/Joystick.h:
 

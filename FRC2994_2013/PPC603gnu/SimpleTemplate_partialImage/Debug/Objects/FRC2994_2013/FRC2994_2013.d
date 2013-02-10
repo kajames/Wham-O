@@ -1,5 +1,5 @@
 SimpleTemplate_partialImage/Debug/Objects/FRC2994_2013/FRC2994_2013.o:  \
- C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/FRC2994_2013.cpp \
+ C:/Users/Home/git/Wham-O/FRC2994_2013/FRC2994_2013.cpp \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/WPILib.h \
   C:/WindRiver/vxworks-6.3/target/h/string.h \
   C:/WindRiver/vxworks-6.3/target/h/types/vxANSI.h \
@@ -377,15 +377,15 @@ SimpleTemplate_partialImage/Debug/Objects/FRC2994_2013/FRC2994_2013.o:  \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/Vision/HSLImage.h \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/Vision/ColorImage.h \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/WPIErrors.h \
-  C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/BasicDefines.h \
-  C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/EGamepad.h \
-  C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/Gamepad.h \
+  C:/Users/Home/git/Wham-O/FRC2994_2013/BasicDefines.h \
+  C:/Users/Home/git/Wham-O/FRC2994_2013/EGamepad.h \
+  C:/Users/Home/git/Wham-O/FRC2994_2013/Gamepad.h \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/Joystick.h \
-  C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/EAnalogTrigger.h \
+  C:/Users/Home/git/Wham-O/FRC2994_2013/EAnalogTrigger.h \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/AnalogTrigger.h \
-  C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/EDigitalInput.h \
+  C:/Users/Home/git/Wham-O/FRC2994_2013/EDigitalInput.h \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/DigitalInput.h \
-  C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/Ejoystick.h
+  C:/Users/Home/git/Wham-O/FRC2994_2013/Ejoystick.h
 
 C:/WindRiver/vxworks-6.3/target/h/WPILib/WPILib.h:
 
@@ -1141,20 +1141,20 @@ C:/WindRiver/vxworks-6.3/target/h/WPILib/Vision/ColorImage.h:
 
 C:/WindRiver/vxworks-6.3/target/h/WPILib/WPIErrors.h:
 
-C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/BasicDefines.h:
+C:/Users/Home/git/Wham-O/FRC2994_2013/BasicDefines.h:
 
-C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/EGamepad.h:
+C:/Users/Home/git/Wham-O/FRC2994_2013/EGamepad.h:
 
-C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/Gamepad.h:
+C:/Users/Home/git/Wham-O/FRC2994_2013/Gamepad.h:
 
 C:/WindRiver/vxworks-6.3/target/h/WPILib/Joystick.h:
 
-C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/EAnalogTrigger.h:
+C:/Users/Home/git/Wham-O/FRC2994_2013/EAnalogTrigger.h:
 
 C:/WindRiver/vxworks-6.3/target/h/WPILib/AnalogTrigger.h:
 
-C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/EDigitalInput.h:
+C:/Users/Home/git/Wham-O/FRC2994_2013/EDigitalInput.h:
 
 C:/WindRiver/vxworks-6.3/target/h/WPILib/DigitalInput.h:
 
-C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/Ejoystick.h:
+C:/Users/Home/git/Wham-O/FRC2994_2013/Ejoystick.h:

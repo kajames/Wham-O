@@ -20,25 +20,39 @@ class RobotDemo : public SimpleRobot
 	Talon collectorMotor;
 	Talon armMotor;
 	DoubleSolenoid shifter;
+	DoubleSolenoid claw1;
+	DoubleSolenoid claw2;
 	Compressor compressor;
 	AnalogChannel potentiometer;
+	Talon motorController;
+	EDigitalInput index_switch;
+	Jaguar indexer;
+	Jaguar shooter;
+	
+	bool m_collectorMotorRunning;
+	bool m_shooterMotorRunning;
 	DriverStationLCD *dsLCD;
-	Jaguar motorController;
 
 public:
 	RobotDemo(void):
-		myRobot(1, 2),	// these must be initialized in the same order
+		myRobot(LEFT_DRIVE_VICTOR, RIGHT_DRIVE_VICTOR),	// these must be initialized in the same order
 		stick(1),		// as they are declared above.
 		stick2(2),
 		gamepad(3),
-		collectorMotor(5),
-		armMotor(7),
-		shifter(7,8),
-		compressor(5, 5),
-		potentiometer(6),
-		motorController(7)
+		collectorMotor(PICKUP_JAG),
+		armMotor(ARM_TALON),
+		shifter(SHIFTER_A,SHIFTER_B),
+		claw1(CLAW_1_LOCKED, CLAW_1_UNLOCKED),
+		claw2(CLAW_2_LOCKED, CLAW_2_UNLOCKED),
+		compressor(COMPRESSOR_PRESSURE_SW, COMPRESSOR_SPIKE),
+		potentiometer(ARM_ROTATION_POT),
+		motorController(6),
+		index_switch(INDEXER_SW),
+		indexer(INDEX_JAG),
+		shooter(SHOOTER_JAG)
 	{
-		
+		m_collectorMotorRunning = false;
+		m_shooterMotorRunning = false;
 		dsLCD = DriverStationLCD::GetInstance();
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "Celina " __TIME__);
 		dsLCD->UpdateLCD();
@@ -148,58 +162,117 @@ public:
 		{
 			armMotor.Set(0.0);
 		}
-	}
-	
-	void HandleDriverRPMAutomatic(void)
-	{
 		
+		if (gamepad.GetEvent(BUTTON_CLAW_1_LOCKED) == kEventClosed)
+		{
+			claw1.Set(DoubleSolenoid::kForward);
+		}
+		else if (gamepad.GetEvent(BUTTON_CLAW_1_UNLOCKED) == kEventClosed)
+		{
+			claw1.Set(DoubleSolenoid::kReverse);
+		}
+		else if (gamepad.GetEvent(BUTTON_CLAW_2_LOCKED) == kEventClosed)
+		{
+			claw2.Set(DoubleSolenoid::kForward);
+		}
+		else if (gamepad.GetEvent(BUTTON_CLAW_2_UNLOCKED) == kEventClosed)
+		{
+			claw2.Set(DoubleSolenoid::kReverse);
+		}
 	}
 	
+	void HandleCollectorInputs ()
+	{		
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "SMR %d", m_shooterMotorRunning);
+		if (false == m_shooterMotorRunning)
+		{
+			dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, " In SMR");
+
+			if (kEventClosed == gamepad.GetEvent(BUTTON_COLLECTOR_FWD))
+			{
+				dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, " READ BUTTON");
+
+					collectorMotor.Set(1.0);
+					m_collectorMotorRunning = true;
+			}
+			else if (kEventOpened == gamepad.GetEvent(BUTTON_COLLECTOR_FWD))
+			{
+				collectorMotor.Set(0.0);
+				m_collectorMotorRunning = false;
+			}
+			else if (kEventClosed == gamepad.GetEvent(BUTTON_COLLECTOR_REV))
+			{
+				collectorMotor.Set(-1.0);
+				m_collectorMotorRunning = true;
+			}
+			else if (kEventOpened == gamepad.GetEvent(BUTTON_COLLECTOR_REV))
+			{
+				collectorMotor.Set(0.0);
+				m_collectorMotorRunning = false;
+			}
+		}
+	}
+	void HandleShooterInputs()
+	{	
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, " CMR %d SMR %d", m_collectorMotorRunning, m_shooterMotorRunning);
+		if (!m_collectorMotorRunning && !m_shooterMotorRunning)
+		{
+			if (kEventClosed == gamepad.GetEvent(BUTTON_SHOOTER))
+			{
+				shooter.Set(-0.5);
+				indexer.Set(-0.5);
+				m_shooterMotorRunning  = true;
+			}
+		}
+		else	
+		{
+			if (index_switch.GetEvent() == kEventClosed)
+			{
+				indexer.Set(0.0);
+				shooter.Set(0.0);
+				m_shooterMotorRunning  = false;
+
+			}
+		}		
+	}
+
 	void OperatorControl(void)
 	{
 		myRobot.SetSafetyEnabled(true);
 		
-		gamepad.EnableButton(BUTTON_FWD);
-		gamepad.EnableButton(BUTTON_REV);
-		gamepad.EnableButton(BUTTON_STOP);
+		gamepad.EnableButton(BUTTON_COLLECTOR_FWD);
+		gamepad.EnableButton(BUTTON_COLLECTOR_REV);
+		gamepad.EnableButton(BUTTON_SHOOTER);
+		gamepad.EnableButton(BUTTON_CLAW_1_LOCKED);
+		gamepad.EnableButton(BUTTON_CLAW_2_LOCKED);
+		gamepad.EnableButton(BUTTON_CLAW_1_UNLOCKED);
+		gamepad.EnableButton(BUTTON_CLAW_2_UNLOCKED);
 		gamepad.Update();
+		
+		index_switch.Update();
 		
 		stick2.EnableButton(BUTTON_SHIFT);
 		stick2.Update();
 		
+		claw1.Set(DoubleSolenoid::kReverse);
+		claw2.Set(DoubleSolenoid::kReverse);
+
 		compressor.Start ();
 		
 		while (IsOperatorControl())
 		{
 			gamepad.Update();
 			stick2.Update();
-			myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
+			index_switch.Update();
+			//myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
 			HandleCollectorInputs();
-			HandleDriverInputsAutomatic();
+			HandleDriverInputsManual();
 			HandleArmInputs();
+			HandleShooterInputs();
 			dsLCD->PrintfLine(DriverStationLCD::kUser_Line2, "Voltage: %f", potentiometer.GetVoltage());
+			dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "Input: %f", motorController.Get());
 			dsLCD->UpdateLCD();
 			Wait(0.005);				// wait for a motor update time
-		}
-	}
-	void HandleCollectorInputs ()
-	{
-		bool m_shooterMotorRunning = false;
-		
-		if (false == m_shooterMotorRunning)
-		{
-			if (kEventClosed == gamepad.GetEvent(BUTTON_FWD))
-			{
-					collectorMotor.Set(1.0);
-			}
-			else if (kEventClosed == gamepad.GetEvent(BUTTON_REV))
-			{
-				collectorMotor.Set(-1.0);
-			}
-			else if (kEventClosed == gamepad.GetEvent(BUTTON_STOP))
-			{
-				collectorMotor.Set(0.0);
-			}
 		}
 	}
 	/**
