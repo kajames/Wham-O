@@ -3,7 +3,6 @@
 	<name>FRC2994_2013</name>
 	<comment></comment>
 	<projects>
-		<project>EInput.0</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

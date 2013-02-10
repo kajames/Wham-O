@@ -1,6 +1,6 @@
 SimpleTemplate_partialImage/Debug/Objects/FRC2994_2013/EJoystick.o:  \
- C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/EJoystick.cpp \
-  C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/EJoystick.h \
+ C:/Users/Home/git/Wham-O/FRC2994_2013/EJoystick.cpp \
+  C:/Users/Home/git/Wham-O/FRC2994_2013/EJoystick.h \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/WPILib.h \
   C:/WindRiver/vxworks-6.3/target/h/string.h \
   C:/WindRiver/vxworks-6.3/target/h/types/vxANSI.h \
@@ -378,9 +378,9 @@ SimpleTemplate_partialImage/Debug/Objects/FRC2994_2013/EJoystick.o:  \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/Vision/HSLImage.h \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/Vision/ColorImage.h \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/WPIErrors.h \
-  C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/BasicDefines.h
+  C:/Users/Home/git/Wham-O/FRC2994_2013/BasicDefines.h
 
-C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/EJoystick.h:
+C:/Users/Home/git/Wham-O/FRC2994_2013/EJoystick.h:
 
 C:/WindRiver/vxworks-6.3/target/h/WPILib/WPILib.h:
 
@@ -1136,4 +1136,4 @@ C:/WindRiver/vxworks-6.3/target/h/WPILib/Vision/ColorImage.h:
 
 C:/WindRiver/vxworks-6.3/target/h/WPILib/WPIErrors.h:
 
-C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013/BasicDefines.h:
+C:/Users/Home/git/Wham-O/FRC2994_2013/BasicDefines.h:
