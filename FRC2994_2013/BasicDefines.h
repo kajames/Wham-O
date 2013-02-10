@@ -20,6 +20,37 @@ typedef struct
 	bool enabled;
 } ButtonEntry;
 
+// Define the target platfomr we are building for. We need this
+// because the hardware on Plyboy, WhamO-1 and WhamO-2 are 
+// all different from one another
+#define PLYBOY
+//#define WHAMO1
+//#define WHAMO2
+
+#ifdef PLYBOY
+#define NAME "Plyboy"
+#define COLLECTOR_MOTOR_CONTROLLER Jaguar
+#define INDEXER_MOTOR_CONTROLLER Jaguar
+#define SHOOTER_MOTOR_CONTROLLER Jaguar
+#define ARM_MOTOR_CONTROLLER Jaguar
+#endif
+
+#ifdef WHAMO1
+#define NAME "WhamO-1"
+#define COLLECTOR_MOTOR_CONTROLLER Jaguar
+#define INDEXER_MOTOR_CONTROLLER Jaguar
+#define SHOOTER_MOTOR_CONTROLLER Jaguar
+#define ARM_MOTOR_CONTROLLER Jaguar
+#endif
+
+#ifdef WHAMO2
+#define NAME "WhamO-2"
+#define COLLECTOR_MOTOR_CONTROLLER Jaguar
+#define INDEXER_MOTOR_CONTROLLER Jaguar
+#define SHOOTER_MOTOR_CONTROLLER Jaguar
+#define ARM_MOTOR_CONTROLLER Jaguar
+#endif
+
 // Digital IOs
 #define LEFT_DRIVE_ENC_A 1
 #define LEFT_DRIVE_ENC_B 2
@@ -46,16 +77,16 @@ typedef struct
 #define UNUSED_ANALOG_INPUT_7 7
 
 // PWM Outputs
-#define LEFT_DRIVE_VICTOR 1
+#define LEFT_DRIVE_PWM 1
 #define UNUSED_PWM_OUTPUT_2 2
-#define RIGHT_DRIVE_VICTOR 3
+#define RIGHT_DRIVE_PWM 3
 #define UNUSED_PWM_OUTPUT_4 4
-#define ARM_TALON 5
+#define ARM_PWM 5
 #define UNUSED_PWM_OUTPUT_6 6
-#define SHOOTER_JAG 7
-#define PICKUP_JAG 8
+#define SHOOTER_PWM 7
+#define PICKUP_PWM 8
 #define UNUSED_PWM_OUTPUT_9 9
-#define INDEX_JAG 10
+#define INDEX_PWM 10
 
 // Joystick 1
 #define UNUSED_BUTTON_1 1
