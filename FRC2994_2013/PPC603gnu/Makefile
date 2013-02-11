@@ -31,8 +31,8 @@ else
 MODE_DIR := NonDebug
 endif
 OBJ_DIR := .
-WS_ROOT_DIR := C:/WindRiver/workspace3.3
-PRJ_ROOT_DIR := C:/Users/Home/git/Wham-O/FRC2994_2013
+WS_ROOT_DIR := C:/WindRiver/workspace
+PRJ_ROOT_DIR := C:/Users/kjames0/git/Wham-O/FRC2994_2013
 
 
 
@@ -162,6 +162,10 @@ SimpleTemplate_partialImage/$(MODE_DIR)/% : LIBPATH =
 SimpleTemplate_partialImage/$(MODE_DIR)/% : LIBS = 
 SimpleTemplate_partialImage/$(MODE_DIR)/% : OBJ_DIR := SimpleTemplate_partialImage/$(MODE_DIR)
 
+SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EAnalogTrigger.o : $(PRJ_ROOT_DIR)/EAnalogTrigger.cpp $(FORCE_FILE_BUILD)
+	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
+
+
 SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EDigitalInput.o : $(PRJ_ROOT_DIR)/EDigitalInput.cpp $(FORCE_FILE_BUILD)
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
@@ -182,7 +186,8 @@ SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/Gamepad.o : $(PRJ_R
 	$(TRACE_FLAG)if [ ! -d "`dirname "$@"`" ]; then mkdir -p "`dirname "$@"`"; fi;echo "building $@"; $(TOOL_PATH)ccppc $(DEBUGFLAGS_C++-Compiler) $(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall $(ADDED_C++FLAGS) $(IDE_INCLUDES) $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o "$@" -c "$<"
 
 
-OBJECTS_SimpleTemplate_partialImage = SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EDigitalInput.o \
+OBJECTS_SimpleTemplate_partialImage = SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EAnalogTrigger.o \
+	 SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EDigitalInput.o \
 	 SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EGamepad.o \
 	 SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EJoystick.o \
 	 SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/FRC2994_2013.o \
@@ -200,8 +205,8 @@ SimpleTemplate_partialImage/$(MODE_DIR)/SimpleTemplate_partialImage_clean :
 
 force : 
 
-DEP_FILES := SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EDigitalInput.d SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EGamepad.d SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EJoystick.d \
-	 SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/FRC2994_2013.d SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/Gamepad.d
+DEP_FILES := SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EAnalogTrigger.d SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EDigitalInput.d SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EGamepad.d \
+	 SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/EJoystick.d SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/FRC2994_2013.d SimpleTemplate_partialImage/$(MODE_DIR)/Objects/FRC2994_2013/Gamepad.d
 -include $(DEP_FILES)
 
 
