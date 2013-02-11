@@ -190,16 +190,21 @@ public:
 		}
 	}
 	
+	// This method reads two buttons on the gamepad: one for forward motion of
+	// the collector (to gather disks) and one for reverse motion (to enable
+	// removal of disks from the collector without having to shoot them). The
+	// buttons must be held down the entire time the collector is in operation.
+	// This is done to ensure that the collector is always in a known state
+	// (doing nothing) if the controls are released.
+	
 	void HandleCollectorInputs ()
 	{		
 		if (false == m_shooterMotorRunning)
 		{
 			if (kEventClosed == gamepad.GetEvent(BUTTON_COLLECTOR_FWD))
 			{
-				dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, " READ BUTTON");
-
-					collectorMotor.Set(1.0);
-					m_collectorMotorRunning = true;
+				collectorMotor.Set(1.0);
+				m_collectorMotorRunning = true;
 			}
 			else if (kEventOpened == gamepad.GetEvent(BUTTON_COLLECTOR_FWD))
 			{
@@ -237,7 +242,6 @@ public:
 				indexerMotor.Set(0.0);
 				shooterMotor.Set(0.0);
 				m_shooterMotorRunning  = false;
-
 			}
 		}		
 	}
