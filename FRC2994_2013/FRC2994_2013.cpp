@@ -33,6 +33,8 @@ class RobotDemo : public SimpleRobot
 	// Input sensors
 	AnalogChannel potentiometer;
 	EDigitalInput indexSwitch;
+	EDigitalInput leftClawLockSwitch;
+	EDigitalInput rightClawLockSwitch;
 	
 	// Miscellaneous
 	Compressor compressor;
@@ -59,6 +61,8 @@ public:
 		yellowClaw(CLAW_2_LOCKED, CLAW_2_UNLOCKED),
 		potentiometer(ARM_ROTATION_POT),
 		indexSwitch(INDEXER_SW),
+		leftClawLockSwitch(CLAW_1_LOCK_SENSOR),
+		rightClawLockSwitch(CLAW_2_LOCK_SENSOR),
 		compressor(COMPRESSOR_PRESSURE_SW, COMPRESSOR_SPIKE),
 		jogTimer()
 	{
@@ -289,6 +293,12 @@ public:
 		}
 	}
 
+	void ReadClawLocks(void)
+	{
+		SmartDashboard::PutBoolean("Left Claw State :", leftClawLockSwitch.GetState());
+		SmartDashboard::PutBoolean("Right Claw State:", rightClawLockSwitch.GetState());
+	}
+	
 	void OperatorControl(void)
 	{
 		myRobot.SetSafetyEnabled(true);
@@ -309,6 +319,9 @@ public:
 		// Set inital states for all switches and buttons
 		gamepad.Update();
 		indexSwitch.Update();
+		leftClawLockSwitch.Update();
+		rightClawLockSwitch.Update();
+		
 		stick2.Update();
 		
 		// Set initial states for all pneumatic actuators
@@ -323,12 +336,15 @@ public:
 			gamepad.Update();
 			stick2.Update();
 			indexSwitch.Update();
+			leftClawLockSwitch.Update();
+			rightClawLockSwitch.Update();
 			
 			HandleCollectorInputs();
 			HandleDriverInputsManual();
 			HandleArmInputs();
 			HandleShooterInputs();
 			HandleResetButton();
+			ReadClawLocks();
 			
 			dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "Voltage: %f", potentiometer.GetVoltage());
 			dsLCD->UpdateLCD();
