@@ -125,9 +125,9 @@ typedef struct
 #define BUTTON_CLAW_1_UNLOCKED 7
 #define BUTTON_CLAW_2_UNLOCKED 8
 #define UNUSED_BUTTON_9 9
-#define UNUSED_BUTTON_10 10
-#define UNUSED_BUTTON_11 11
-#define UNUSED_BUTTON_12 12
+#define BUTTON_STOP_ALL 10
+#define BUTTON_JOG_FWD 11
+#define BUTTON_JOG_REV 12
 
 
 //Relays
@@ -150,6 +150,6 @@ typedef struct
 #define UNUSED_SOLENOID_7 7
 #define UNUSED_SOLENOID_8 8
 
-
-
+// Various Constants
+#define JOG_TIME 2.0
 #endif
