@@ -4,6 +4,7 @@
 #include "EAnalogTrigger.h"
 #include "EDigitalInput.h"
 #include "Ejoystick.h"
+#include "NetworkTables/NetworkTable.h"
 
 /**
  * This is Wham-O - the 2013 2994 Robot
@@ -35,10 +36,12 @@ class RobotDemo : public SimpleRobot
 	
 	// Miscellaneous
 	Compressor compressor;
+	Timer jogTimer;
 
 	// Nonobject members
 	bool m_collectorMotorRunning;
 	bool m_shooterMotorRunning;
+	bool m_jogTimerRunning;
 	DriverStationLCD *dsLCD;
 
 public:
@@ -56,10 +59,12 @@ public:
 		yellowClaw(CLAW_2_LOCKED, CLAW_2_UNLOCKED),
 		potentiometer(ARM_ROTATION_POT),
 		indexSwitch(INDEXER_SW),
-		compressor(COMPRESSOR_PRESSURE_SW, COMPRESSOR_SPIKE)
+		compressor(COMPRESSOR_PRESSURE_SW, COMPRESSOR_SPIKE),
+		jogTimer()
 	{
 		m_collectorMotorRunning = false;
 		m_shooterMotorRunning   = false;
+		m_jogTimerRunning       = false;
 		
 		dsLCD = DriverStationLCD::GetInstance();
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "2013 " NAME);
@@ -167,11 +172,35 @@ public:
 				armMotor.Set(0.0);
 			}	
 		}
+		else if (kEventClosed == gamepad.GetEvent(BUTTON_JOG_FWD))
+		{
+			armMotor.Set(1.0);
+			jogTimer.Start();
+			jogTimer.Reset();
+			m_jogTimerRunning = true;
+		}
+		else if (kEventClosed == gamepad.GetEvent(BUTTON_JOG_REV))
+		{
+			armMotor.Set(-1.0);
+			jogTimer.Start();
+			jogTimer.Reset();
+			m_jogTimerRunning = true;
+		}
+		else if (m_jogTimerRunning)
+		{
+			if (jogTimer.HasPeriodPassed(JOG_TIME))
+			{
+				armMotor.Set(0);
+				jogTimer.Stop();
+				jogTimer.Reset();
+				m_jogTimerRunning = false;
+			}
+		}
 		else
 		{
 			armMotor.Set(0.0);
-		}
-		
+		}	
+
 		if (gamepad.GetEvent(BUTTON_CLAW_1_LOCKED) == kEventClosed)
 		{
 			greenClaw.Set(DoubleSolenoid::kForward);
@@ -188,6 +217,7 @@ public:
 		{
 			yellowClaw.Set(DoubleSolenoid::kReverse);
 		}
+		
 	}
 	
 	// This method reads two buttons on the gamepad: one for forward motion of
@@ -237,13 +267,26 @@ public:
 		}
 		else	
 		{
-			if (indexSwitch.GetEvent() == kEventClosed)
+			if (indexSwitch.GetEvent() == kEventOpened)
 			{
 				indexerMotor.Set(0.0);
 				shooterMotor.Set(0.0);
 				m_shooterMotorRunning  = false;
 			}
 		}		
+	}
+	
+	void HandleResetButton(void)
+	{
+		if (gamepad.GetEvent(BUTTON_STOP_ALL) == kEventClosed)
+		{
+			collectorMotor.Set(0.0);
+			shooterMotor.Set(0.0);
+			indexerMotor.Set(0.0);
+			armMotor.Set(0.0);
+			m_collectorMotorRunning = false;
+			m_shooterMotorRunning  = false;
+		}
 	}
 
 	void OperatorControl(void)
@@ -257,6 +300,10 @@ public:
 		gamepad.EnableButton(BUTTON_CLAW_2_LOCKED);
 		gamepad.EnableButton(BUTTON_CLAW_1_UNLOCKED);
 		gamepad.EnableButton(BUTTON_CLAW_2_UNLOCKED);
+		gamepad.EnableButton(BUTTON_STOP_ALL);
+		gamepad.EnableButton(BUTTON_JOG_FWD);
+		gamepad.EnableButton(BUTTON_JOG_REV);
+
 		stick2.EnableButton(BUTTON_SHIFT);
 
 		// Set inital states for all switches and buttons
@@ -281,7 +328,11 @@ public:
 			HandleDriverInputsManual();
 			HandleArmInputs();
 			HandleShooterInputs();
-			dsLCD->PrintfLine(DriverStationLCD::kUser_Line2, "Voltage: %f", potentiometer.GetVoltage());			dsLCD->UpdateLCD();
+			HandleResetButton();
+			
+			dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "Voltage: %f", potentiometer.GetVoltage());
+			dsLCD->UpdateLCD();
+			SmartDashboard::PutNumber("Potentiometer", potentiometer.GetVoltage());
 			Wait(0.005);				// wait for a motor update time
 		}
 	}
