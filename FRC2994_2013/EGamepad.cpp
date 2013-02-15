@@ -1,6 +1,5 @@
 #include "EGamepad.h"
 
-
 EGamepad::EGamepad(UINT32 port):
 	Gamepad(port)
 {
@@ -33,6 +32,16 @@ StateType EGamepad::GetState(int buttonNumber)
 	return m_buttonTable[buttonNumber].state;
 }
 
+EventType EGamepad::GetDPadEvent(Gamepad::DPadDirection direction)
+{
+	return m_dpadTable[direction].event;
+}
+
+StateType EGamepad::GetDPadState(Gamepad::DPadDirection direction)
+{
+	return m_dpadTable[direction].state;
+}
+
 void EGamepad::Update()
 {
 	StateType newState;
@@ -58,6 +67,37 @@ void EGamepad::Update()
 				}
 				m_buttonTable[i].state = newState;
 			}
+		}
+	}
+	
+	Gamepad::DPadDirection dpadDirection = GetDPad();
+	
+	for (int i=Gamepad::kCenter; i<=Gamepad::kUpRight; i++)
+	{
+		if (i == dpadDirection)
+		{
+			newState = kStateClosed;
+		}
+		else
+		{
+			newState = kStateOpen;
+		}
+		
+		if (newState == m_dpadTable[i].state)
+		{
+			m_dpadTable[i].event = kEventNone;
+		}
+		else
+		{
+			if (kStateClosed == newState)
+			{
+				m_dpadTable[i].event = kEventClosed;
+			}
+			else
+			{
+				m_dpadTable[i].event = kEventOpened;
+			}
+			m_dpadTable[i].state = newState;
 		}
 	}
 }
@@ -86,4 +126,18 @@ void EGamepad::Initialize()
 		m_buttonTable[i].event = kEventErr;
 		m_buttonTable[i].state = GetRawButton(i) ? kStateClosed : kStateOpen;
 	}
+	
+	// Only one DPad direction can be closed at any one time (kCenter is returned 
+	// when no direction is closed). We initialize all the directions to open then
+	// read the DPad and set closed the direction read (which will be, unless someone
+	// is messing with the DPad at init time, kCentre)
+	
+	for (int i=Gamepad::kCenter; i<=Gamepad::kUpRight; i++)
+	{
+		m_dpadTable[i].enabled = false; // We never check this
+		m_dpadTable[i].event = kEventNone;
+		m_dpadTable[i].state = kStateOpen;
+	}
+	
+	m_dpadTable[GetDPad()].state = kStateClosed;
 }

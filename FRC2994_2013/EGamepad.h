@@ -18,6 +18,9 @@ public:
 
 	EventType GetEvent(int buttonNumber);
 	StateType GetState(int buttonNumber);
+	EventType EGamepad::GetDPadEvent(Gamepad::DPadDirection direction);
+	StateType EGamepad::GetDPadState(Gamepad::DPadDirection direction);
+
 	void Update();
 	bool EnableButton(int buttonNumber);
 	
@@ -26,5 +29,6 @@ private:
 	void Initialize();
 	
 	ButtonEntry m_buttonTable[EGAMEPAD_NUM_BUTTONS+1];
+	ButtonEntry m_dpadTable[Gamepad::kUpRight+1];
 };
 #endif

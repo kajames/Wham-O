@@ -151,5 +151,6 @@ typedef struct
 #define UNUSED_SOLENOID_8 8
 
 // Various Constants
-#define JOG_TIME 2.0
+#define JOG_TIME 0.5
+
 #endif

@@ -178,20 +178,34 @@ public:
 				armMotor.Set(0.0);
 			}	
 		}
-		else if (kEventClosed == gamepad.GetEvent(BUTTON_JOG_FWD))
+		else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kUp))
 		{
 			armMotor.Set(1.0);
 			jogTimer.Start();
 			jogTimer.Reset();
 			m_jogTimerRunning = true;
 		}
-		else if (kEventClosed == gamepad.GetEvent(BUTTON_JOG_REV))
+		else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kDown))
 		{
 			armMotor.Set(-1.0);
 			jogTimer.Start();
 			jogTimer.Reset();
 			m_jogTimerRunning = true;
 		}
+//		else if (kEventClosed == gamepad.GetEvent(BUTTON_JOG_FWD))
+//		{
+//			armMotor.Set(1.0);
+//			jogTimer.Start();
+//			jogTimer.Reset();
+//			m_jogTimerRunning = true;
+//		}
+//		else if (kEventClosed == gamepad.GetEvent(BUTTON_JOG_REV))
+//		{
+//			armMotor.Set(-1.0);
+//			jogTimer.Start();
+//			jogTimer.Reset();
+//			m_jogTimerRunning = true;
+//		}
 		else if (m_jogTimerRunning)
 		{
 			if (jogTimer.HasPeriodPassed(JOG_TIME))
