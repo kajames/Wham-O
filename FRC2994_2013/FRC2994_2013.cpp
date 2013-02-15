@@ -33,8 +33,8 @@ class RobotDemo : public SimpleRobot
 	// Input sensors
 	AnalogChannel potentiometer;
 	EDigitalInput indexSwitch;
-	EDigitalInput leftClawLockSwitch;
-	EDigitalInput rightClawLockSwitch;
+	EDigitalInput greenClawLockSwitch;
+	EDigitalInput yellowClawLockSwitch;
 	
 	// Miscellaneous
 	Compressor compressor;
@@ -44,6 +44,7 @@ class RobotDemo : public SimpleRobot
 	bool m_collectorMotorRunning;
 	bool m_shooterMotorRunning;
 	bool m_jogTimerRunning;
+	
 	DriverStationLCD *dsLCD;
 
 public:
@@ -61,8 +62,8 @@ public:
 		yellowClaw(CLAW_2_LOCKED, CLAW_2_UNLOCKED),
 		potentiometer(ARM_ROTATION_POT),
 		indexSwitch(INDEXER_SW),
-		leftClawLockSwitch(CLAW_1_LOCK_SENSOR),
-		rightClawLockSwitch(CLAW_2_LOCK_SENSOR),
+		greenClawLockSwitch(CLAW_1_LOCK_SENSOR),
+		yellowClawLockSwitch(CLAW_2_LOCK_SENSOR),
 		compressor(COMPRESSOR_PRESSURE_SW, COMPRESSOR_SPIKE),
 		jogTimer()
 	{
@@ -71,6 +72,7 @@ public:
 		m_jogTimerRunning       = false;
 		
 		dsLCD = DriverStationLCD::GetInstance();
+		dsLCD->Clear();
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "2013 " NAME);
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line2, __DATE__ " "__TIME__);
 
@@ -285,18 +287,39 @@ public:
 		if (gamepad.GetEvent(BUTTON_STOP_ALL) == kEventClosed)
 		{
 			collectorMotor.Set(0.0);
+			m_collectorMotorRunning = false;
+
 			shooterMotor.Set(0.0);
+			m_shooterMotorRunning  = false;
+
 			indexerMotor.Set(0.0);
 			armMotor.Set(0.0);
-			m_collectorMotorRunning = false;
-			m_shooterMotorRunning  = false;
+			
+			jogTimer.Stop();
+			jogTimer.Reset();
+			m_jogTimerRunning = false;
 		}
 	}
 
-	void ReadClawLocks(void)
+	void UpdateStatusDisplays(void)
 	{
-		SmartDashboard::PutBoolean("Left Claw State :", leftClawLockSwitch.GetState());
-		SmartDashboard::PutBoolean("Right Claw State:", rightClawLockSwitch.GetState());
+		// Arm position via potentiometer voltage (2.5 volts is center position)
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "Voltage: %3.1f", potentiometer.GetVoltage());
+		SmartDashboard::PutNumber("Potentiometer", potentiometer.GetVoltage());
+		
+		// Claw lock states
+		SmartDashboard::PutBoolean("Green Claw State :", greenClawLockSwitch.GetState());
+		SmartDashboard::PutBoolean("Yellow Claw State:", yellowClawLockSwitch.GetState());
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "Green : %s", 
+			greenClawLockSwitch.GetState() ? "Locked" : "Unlocked");
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Yellow: %s", 
+			yellowClawLockSwitch.GetState() ? "Locked" : "Unlocked");
+		
+		// State viariables
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "CMR: %s SMR: %s JTR: %s",
+			m_collectorMotorRunning ? "T" : "F",
+			m_shooterMotorRunning ? "T" : "F",   
+			m_jogTimerRunning ? "T" : "F");
 	}
 	
 	void OperatorControl(void)
@@ -319,8 +342,8 @@ public:
 		// Set inital states for all switches and buttons
 		gamepad.Update();
 		indexSwitch.Update();
-		leftClawLockSwitch.Update();
-		rightClawLockSwitch.Update();
+		greenClawLockSwitch.Update();
+		yellowClawLockSwitch.Update();
 		
 		stick2.Update();
 		
@@ -336,19 +359,17 @@ public:
 			gamepad.Update();
 			stick2.Update();
 			indexSwitch.Update();
-			leftClawLockSwitch.Update();
-			rightClawLockSwitch.Update();
+			greenClawLockSwitch.Update();
+			yellowClawLockSwitch.Update();
 			
 			HandleCollectorInputs();
 			HandleDriverInputsManual();
 			HandleArmInputs();
 			HandleShooterInputs();
 			HandleResetButton();
-			ReadClawLocks();
+			UpdateStatusDisplays();
 			
-			dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "Voltage: %f", potentiometer.GetVoltage());
 			dsLCD->UpdateLCD();
-			SmartDashboard::PutNumber("Potentiometer", potentiometer.GetVoltage());
 			Wait(0.005);				// wait for a motor update time
 		}
 	}
