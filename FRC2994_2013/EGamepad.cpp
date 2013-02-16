@@ -17,7 +17,7 @@ EventType EGamepad::GetEvent(int buttonNumber)
 		return kEventErr;
 	}
 	
-	//Disabled buttons are initialized to kEventErr
+	// Disabled buttons are initialized to kEventErr (just sayin')
 	return m_buttonTable[buttonNumber].event;
 }
 
@@ -28,7 +28,7 @@ StateType EGamepad::GetState(int buttonNumber)
 		return kStateErr;
 	}
 	
-	//Disabled buttons are initialized to kStateErr
+	// Disabled buttons are initialized to kStateErr (just sayin' again)
 	return m_buttonTable[buttonNumber].state;
 }
 
@@ -71,6 +71,11 @@ void EGamepad::Update()
 	}
 	
 	Gamepad::DPadDirection dpadDirection = GetDPad();
+	
+	// By definition, only one contact on the dpad, at most, can be pressed at
+	// any one time. So, we loop through the table using a newState of "open"
+	// for every entry except the one (if any) that is being pressed. Note that
+	// a kCenter direction is equivalent to nothing pressed.
 	
 	for (int i=Gamepad::kCenter; i<=Gamepad::kUpRight; i++)
 	{
