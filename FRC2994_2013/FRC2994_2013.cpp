@@ -44,6 +44,7 @@ class RobotDemo : public SimpleRobot
 	bool m_collectorMotorRunning;
 	bool m_shooterMotorRunning;
 	bool m_jogTimerRunning;
+	int  m_shiftCount;
 	
 	DriverStationLCD *dsLCD;
 
@@ -70,6 +71,7 @@ public:
 		m_collectorMotorRunning = false;
 		m_shooterMotorRunning   = false;
 		m_jogTimerRunning       = false;
+		m_shiftCount            = MAX_SHIFTS;
 		
 		dsLCD = DriverStationLCD::GetInstance();
 		dsLCD->Clear();
@@ -97,129 +99,81 @@ public:
 		myRobot.ArcadeDrive(stick);
 		if(kEventClosed == stick2.GetEvent(BUTTON_SHIFT))
 		{
-			// Shift into high gear.
-			shifter.Set(DoubleSolenoid::kForward);
+			if (m_shiftCount)
+			{
+				// Shift into high gear.
+				shifter.Set(DoubleSolenoid::kForward);
+				m_shiftCount--;
+			}
 		}
 		else if(kEventOpened == stick2.GetEvent(BUTTON_SHIFT))
 		{
-			// Shift into low gear.
-			shifter.Set(DoubleSolenoid::kReverse);
+			if (m_shiftCount)
+			{
+				// Shift into low gear.
+				shifter.Set(DoubleSolenoid::kReverse);
+				m_shiftCount--;
+			}
 		}
 	}
 
 	void HandleDriverInputsAutomatic(void)
 	{
-		//myRobot.ArcadeDrive(stick);
-		
-		if(DoubleSolenoid::kReverse == shifter.Get())
-		{
-			if(stick.GetY() < -0.25)
-			{
-				shifter.Set(DoubleSolenoid::kForward);
-			}
-		}
-		// If the robot is in low gear and is over 0.2 input,
-		// then switch into high gear.
-		else if(stick.GetY() > -0.2)
-		{
-			shifter.Set(DoubleSolenoid::kReverse);
-		}
-		
-		SquareInputs();
-	}
-	
-	void SquareInputs(void)
-	{
-		if(stick.GetY() < 0)
-		{
-			if(DoubleSolenoid::kReverse == shifter.Get())
-			{
-				myRobot.ArcadeDrive((stick.GetY() * stick.GetY() * -4.0), stick.GetX());
-			}
-			else if(DoubleSolenoid::kForward == shifter.Get())
-			{
-				myRobot.ArcadeDrive((stick.GetY() * stick.GetY() * -1.0), stick.GetX());
-			}
-		}
-		else if(stick.GetY() > 0)
-		{
-			if(DoubleSolenoid::kReverse == shifter.Get())
-			{
-				myRobot.ArcadeDrive((stick.GetY() * stick.GetY() * 4.0), stick.GetX());
-			}
-			else if(DoubleSolenoid::kForward == shifter.Get())
-			{
-				myRobot.ArcadeDrive((stick.GetY() * stick.GetY() * 1.0), stick.GetX());
-			}
-		}
+		// Placeholder for automatic transmission code
 	}
 	
 	void HandleArmInputs(void)
 	{
-		if (gamepad.GetLeftY() < -0.1)
+		if (!m_jogTimerRunning)
 		{
-			if (potentiometer.GetVoltage() < 4.5)
+			if (gamepad.GetLeftY() < -0.1)
+			{
+				if (potentiometer.GetVoltage() < 4.5)
+				{
+					armMotor.Set(1.0);
+				}
+				else
+				{
+					armMotor.Set(0.0);
+				}
+			}
+			else if (gamepad.GetLeftY() > 0.1)
+			{
+				if (potentiometer.GetVoltage() > .5)
+				{
+					armMotor.Set(-1.0);
+				}
+				else
+				{
+					armMotor.Set(0.0);
+				}	
+			}
+			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kUp))
 			{
 				armMotor.Set(1.0);
+				jogTimer.Start();
+				jogTimer.Reset();
+				m_jogTimerRunning = true;
 			}
-			else
-			{
-				armMotor.Set(0.0);
-			}
-		}
-		else if (gamepad.GetLeftY() > 0.1)
-		{
-			if (potentiometer.GetVoltage() > .5)
+			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kDown))
 			{
 				armMotor.Set(-1.0);
+				jogTimer.Start();
+				jogTimer.Reset();
+				m_jogTimerRunning = true;
 			}
 			else
 			{
 				armMotor.Set(0.0);
-			}	
-		}
-		else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kUp))
-		{
-			armMotor.Set(1.0);
-			jogTimer.Start();
-			jogTimer.Reset();
-			m_jogTimerRunning = true;
-		}
-		else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kDown))
-		{
-			armMotor.Set(-1.0);
-			jogTimer.Start();
-			jogTimer.Reset();
-			m_jogTimerRunning = true;
-		}
-//		else if (kEventClosed == gamepad.GetEvent(BUTTON_JOG_FWD))
-//		{
-//			armMotor.Set(1.0);
-//			jogTimer.Start();
-//			jogTimer.Reset();
-//			m_jogTimerRunning = true;
-//		}
-//		else if (kEventClosed == gamepad.GetEvent(BUTTON_JOG_REV))
-//		{
-//			armMotor.Set(-1.0);
-//			jogTimer.Start();
-//			jogTimer.Reset();
-//			m_jogTimerRunning = true;
-//		}
-		else if (m_jogTimerRunning)
-		{
-			if (jogTimer.HasPeriodPassed(JOG_TIME))
-			{
-				armMotor.Set(0);
-				jogTimer.Stop();
-				jogTimer.Reset();
-				m_jogTimerRunning = false;
 			}
 		}
-		else
+		else if (jogTimer.HasPeriodPassed(JOG_TIME))
 		{
-			armMotor.Set(0.0);
-		}	
+			armMotor.Set(0);
+			jogTimer.Stop();
+			jogTimer.Reset();
+			m_jogTimerRunning = false;
+		}
 
 		if (gamepad.GetEvent(BUTTON_CLAW_1_LOCKED) == kEventClosed)
 		{
@@ -316,18 +270,35 @@ public:
 	}
 
 	void UpdateStatusDisplays(void)
-	{
+	{		
+		// Joystick values
+		SmartDashboard::PutNumber("stickX", stick.GetX());
+		SmartDashboard::PutNumber("stickY", stick.GetY());
+		SmartDashboard::PutBoolean("shift", stick2.GetState(BUTTON_SHIFT) ? kStateClosed : kStateOpen);
+		
+		// Shooter/Indexer values
+		SmartDashboard::PutBoolean("indexSwitch", indexSwitch.GetState() ? kStateClosed : kStateOpen);
+		SmartDashboard::PutNumber("shooterMotor", shooterMotor.Get());
+		SmartDashboard::PutNumber("indexerMotor", indexerMotor.Get());
+
+		// Misc Motor Values
+		SmartDashboard::PutNumber("collectorMotor", collectorMotor.Get());
+		SmartDashboard::PutNumber("armMotor", armMotor.Get());
+
 		// Arm position via potentiometer voltage (2.5 volts is center position)
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "Voltage: %3.1f", potentiometer.GetVoltage());
 		SmartDashboard::PutNumber("Potentiometer", potentiometer.GetVoltage());
 		
 		// Claw lock states
-		SmartDashboard::PutBoolean("Green Claw State :", greenClawLockSwitch.GetState());
-		SmartDashboard::PutBoolean("Yellow Claw State:", yellowClawLockSwitch.GetState());
+		SmartDashboard::PutBoolean("Green Claw State", greenClawLockSwitch.GetState());
+		SmartDashboard::PutBoolean("Yellow Claw State", yellowClawLockSwitch.GetState());
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "Green : %s", 
 			greenClawLockSwitch.GetState() ? "Locked" : "Unlocked");
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Yellow: %s", 
 			yellowClawLockSwitch.GetState() ? "Locked" : "Unlocked");
+		
+		// Pneumatic shifter count
+		SmartDashboard::PutNumber("Shift Count", m_shiftCount);
 		
 		// State viariables
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "CMR: %s SMR: %s JTR: %s",
