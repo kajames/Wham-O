@@ -20,6 +20,9 @@ typedef struct
 	bool enabled;
 } ButtonEntry;
 
+// Maximum Shifts Allowed
+#define MAX_SHIFTS 20
+
 // Define the target platfomr we are building for. We need this
 // because the hardware on Plyboy, WhamO-1 and WhamO-2 are 
 // all different from one another
