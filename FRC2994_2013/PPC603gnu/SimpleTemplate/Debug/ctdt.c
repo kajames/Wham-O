@@ -11,6 +11,8 @@ void _GLOBAL__I__Z20FRC_userClassFactoryv();
 
 void _GLOBAL__I__ZN13EDigitalInputC2Ej();
 
+void _GLOBAL__I__ZN14EAnalogTriggerC2Ej();
+
 void _GLOBAL__I__ZN8EGamepadC2Ej();
 
 void _GLOBAL__I__ZN9EJoystickC2Ej();
@@ -22,6 +24,8 @@ void _GLOBAL__I__ZN9Scheduler9_instanceE();
 void _GLOBAL__I__ZN11WaitCommandC2Ed();
 
 void _GLOBAL__I_wpi_error_s_ModuleIndexOutOfRange();
+
+void _GLOBAL__I__ZN10LiveWindow10m_instanceE();
 
 void _GLOBAL__I__ZN17MotorSafetyHelper12m_headHelperE();
 
@@ -66,12 +70,14 @@ void (*_ctors[])() =
     {
     _GLOBAL__I__Z20FRC_userClassFactoryv,
     _GLOBAL__I__ZN13EDigitalInputC2Ej,
+    _GLOBAL__I__ZN14EAnalogTriggerC2Ej,
     _GLOBAL__I__ZN8EGamepadC2Ej,
     _GLOBAL__I__ZN9EJoystickC2Ej,
     _GLOBAL__I__ZN12PrintCommandC2EPKc,
     _GLOBAL__I__ZN9Scheduler9_instanceE,
     _GLOBAL__I__ZN11WaitCommandC2Ed,
     _GLOBAL__I_wpi_error_s_ModuleIndexOutOfRange,
+    _GLOBAL__I__ZN10LiveWindow10m_instanceE,
     _GLOBAL__I__ZN17MotorSafetyHelper12m_headHelperE,
     _GLOBAL__I__ZN8Notifier21kTimerInterruptNumberE,
     _GLOBAL__I__ZN8Resource12m_createLockE,
@@ -97,6 +103,8 @@ void (*_ctors[])() =
 void _GLOBAL__D__Z20FRC_userClassFactoryv();
 
 void _GLOBAL__D__ZN13EDigitalInputC2Ej();
+
+void _GLOBAL__D__ZN14EAnalogTriggerC2Ej();
 
 void _GLOBAL__D__ZN8EGamepadC2Ej();
 
@@ -145,6 +153,7 @@ void (*_dtors[])() =
     {
     _GLOBAL__D__Z20FRC_userClassFactoryv,
     _GLOBAL__D__ZN13EDigitalInputC2Ej,
+    _GLOBAL__D__ZN14EAnalogTriggerC2Ej,
     _GLOBAL__D__ZN8EGamepadC2Ej,
     _GLOBAL__D__ZN9EJoystickC2Ej,
     _GLOBAL__D__ZN9Scheduler9_instanceE,

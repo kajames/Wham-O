@@ -194,5 +194,6 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 
 // Various Constants
 #define JOG_TIME 0.5
+#define SPINUP_TIME 1.0
 
 #endif

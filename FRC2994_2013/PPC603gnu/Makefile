@@ -31,8 +31,8 @@ else
 MODE_DIR := NonDebug
 endif
 OBJ_DIR := .
-WS_ROOT_DIR := C:/WindRiver/workspace
-PRJ_ROOT_DIR := C:/Users/kjames0/git/Wham-O/FRC2994_2013
+WS_ROOT_DIR := C:/Users/Jack/Dropbox/workspace
+PRJ_ROOT_DIR := C:/Users/Jack/Documents/GitHub/Wham-O/FRC2994_2013
 
 
 

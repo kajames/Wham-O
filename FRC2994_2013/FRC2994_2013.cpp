@@ -15,7 +15,7 @@ class RobotDemo : public SimpleRobot
 {
 	// Drive motors
 	LEFT_DRIVE_MOTOR leftDriveMotor; // Done BEFORE the robot drive which uses them
-	LEFT_DRIVE_MOTOR rightDriveMotor;
+	RIGHT_DRIVE_MOTOR rightDriveMotor;
 	
 	// Drive system
 	RobotDrive myRobot; // robot drive system
@@ -48,6 +48,7 @@ class RobotDemo : public SimpleRobot
 	// Miscellaneous
 	Compressor compressor;
 	Timer jogTimer;
+	Timer shooterTimer;
 
 	// Nonobject members
 	bool m_collectorMotorRunning;
@@ -78,7 +79,8 @@ public:
 		greenClawLockSwitch(CLAW_1_LOCK_SENSOR),
 		yellowClawLockSwitch(CLAW_2_LOCK_SENSOR),
 		compressor(COMPRESSOR_PRESSURE_SW, COMPRESSOR_SPIKE),
-		jogTimer()
+		jogTimer(),
+		shooterTimer()
 	{
 		m_collectorMotorRunning = false;
 		m_shooterMotorRunning   = false;
@@ -309,12 +311,19 @@ public:
 	
 	void HandleShooterInputs()
 	{	
-		if (!m_collectorMotorRunning && !m_shooterMotorRunning)
+		if (shooterTimer.HasPeriodPassed(SPINUP_TIME))
+		{
+			shooterTimer.Stop();
+			shooterTimer.Reset();
+			
+			indexerMotor.Set(INDEXER_FWD);
+		}
+		else if (!m_collectorMotorRunning && !m_shooterMotorRunning)
 		{
 			if (kEventClosed == gamepad.GetEvent(BUTTON_SHOOTER))
 			{
 				shooterMotor.Set(SHOOTER_FWD);
-				indexerMotor.Set(INDEXER_FWD);
+				shooterTimer.Start();
 				m_shooterMotorRunning  = true;
 			}
 		}
