@@ -5,6 +5,7 @@
 #include "EDigitalInput.h"
 #include "Ejoystick.h"
 #include "NetworkTables/NetworkTable.h"
+#include "Timer.h"
 
 /**
  * This is Wham-O - the 2013 2994 Robot
@@ -12,6 +13,11 @@
 
 class RobotDemo : public SimpleRobot
 {
+	// Drive motors
+	LEFT_DRIVE_MOTOR leftDriveMotor; // Done BEFORE the robot drive which uses them
+	LEFT_DRIVE_MOTOR rightDriveMotor;
+	
+	// Drive system
 	RobotDrive myRobot; // robot drive system
 	
 	// Input Devices
@@ -19,11 +25,14 @@ class RobotDemo : public SimpleRobot
 	EJoystick stick2;
 	EGamepad  gamepad;
 	
-	// Motor Controllers (macros used because of differing hw on plyboy and bots)
+	// Other Motor Controllers (macros used because of differing hw on plyboy and bots)
 	COLLECTOR_MOTOR_CONTROLLER collectorMotor;
 	INDEXER_MOTOR_CONTROLLER   indexerMotor;
 	SHOOTER_MOTOR_CONTROLLER   shooterMotor;
 	ARM_MOTOR_CONTROLLER       armMotor;
+	
+	// Shaft encoders
+	Encoder leftDriveEncoder;
 	
 	// Output Devices
 	DoubleSolenoid shifter;
@@ -50,7 +59,9 @@ class RobotDemo : public SimpleRobot
 
 public:
 	RobotDemo(void):
-		myRobot(LEFT_DRIVE_PWM, RIGHT_DRIVE_PWM),	// these must be initialized in the same order
+		leftDriveMotor(LEFT_DRIVE_PWM),
+		rightDriveMotor(RIGHT_DRIVE_PWM),
+		myRobot(&leftDriveMotor, &rightDriveMotor),	// these must be initialized in the same order
 		stick(1),									// as they are declared above.
 		stick2(2),
 		gamepad(3),
@@ -58,6 +69,7 @@ public:
 		indexerMotor(INDEX_PWM),
 		shooterMotor(SHOOTER_PWM),
 		armMotor (ARM_PWM),
+		leftDriveEncoder(LEFT_DRIVE_ENC_A, LEFT_DRIVE_ENC_B),
 		shifter(SHIFTER_A,SHIFTER_B),
 		greenClaw(CLAW_1_LOCKED, CLAW_1_UNLOCKED),
 		yellowClaw(CLAW_2_LOCKED, CLAW_2_UNLOCKED),
@@ -81,17 +93,84 @@ public:
 		dsLCD->UpdateLCD();
 		myRobot.SetExpiration(0.1);
 		shifter.Set(DoubleSolenoid::kReverse);
+		
+		leftDriveEncoder.SetDistancePerPulse(DRIVE_ENCODER_DISTANCE_PER_PULSE);
+		leftDriveEncoder.SetMaxPeriod(1.0);
+		leftDriveEncoder.SetReverseDirection(true);  // change to true if necessary
+		leftDriveEncoder.Start();
+
+	}
+	
+	double absolute(double value)
+	{
+		if (value < 0.0)
+		{
+			value = -1.0 * value;
+		}
+		return value;
+	}
+	
+	void DoAutonomousMoveStep(const step_speed *speeds, char * message)
+	{
+		leftDriveEncoder.Reset();
+		double dist = speeds[0].distance;
+		double reading;
+		
+		// Start moving the robot
+		leftDriveMotor.Set(speeds->speed_left);
+		rightDriveMotor.Set(speeds->speed_right);
+
+		reading = absolute(leftDriveEncoder.GetDistance());
+		
+		while (dist > reading)
+		{
+			Wait(0.02);
+			reading = absolute(leftDriveEncoder.GetDistance());
+			dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "D: %5.0f R : %5.0f", dist, reading);
+			dsLCD->UpdateLCD();
+		}
+		
+		leftDriveMotor.Set(0.0);
+		rightDriveMotor.Set(0.0);
 	}
 
-	/**
-	 * Drive left & right motors for 2 seconds then stop
-	 */
 	void Autonomous(void)
 	{
 		myRobot.SetSafetyEnabled(false);
-		myRobot.Drive(-0.5, 0.0); 	// drive forwards half speed
-		Wait(2.0); 				//    for 2 seconds
-		myRobot.Drive(0.0, 0.0); 	// stop robot
+		
+		// Move the arm to a level position
+		armMotor.Set(ARM_FWD);
+		while (!((potentiometer.GetVoltage() > 2.4) && (potentiometer.GetVoltage() < 2.6))) 
+		{
+			// Check to make sure we don't overrotate the arm in either direction
+			if (potentiometer.GetVoltage() > 4.5 || potentiometer.GetVoltage() < 0.5)
+			{
+				armMotor.Set(0.0);
+				return;
+			}
+			Wait(0.2);
+			UpdateStatusDisplays();
+		}
+		armMotor.Set(0.0);
+		
+		// Drive robot 
+		
+		DoAutonomousMoveStep(&m_autoForward[0], "Moving...");
+		DoAutonomousMoveStep(&m_autoForward[1], "Moving...");
+		
+		//Shoot for five seconds
+		Timer* t = new Timer();
+		t->Start();
+		
+		shooterMotor.Set(SHOOTER_FWD);
+		indexerMotor.Set(INDEXER_FWD);
+
+		while(!t->HasPeriodPassed(5.0))
+		{
+			Wait(0.02);
+		}
+		shooterMotor.Set(0.0);
+		indexerMotor.Set(0.0);
 	}
 	
 	void HandleDriverInputsManual(void)
@@ -130,7 +209,7 @@ public:
 			{
 				if (potentiometer.GetVoltage() < 4.5)
 				{
-					armMotor.Set(1.0);
+					armMotor.Set(ARM_FWD);
 				}
 				else
 				{
@@ -141,7 +220,7 @@ public:
 			{
 				if (potentiometer.GetVoltage() > .5)
 				{
-					armMotor.Set(-1.0);
+					armMotor.Set(ARM_REV);
 				}
 				else
 				{
@@ -150,14 +229,14 @@ public:
 			}
 			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kUp))
 			{
-				armMotor.Set(1.0);
+				armMotor.Set(ARM_FWD);
 				jogTimer.Start();
 				jogTimer.Reset();
 				m_jogTimerRunning = true;
 			}
 			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kDown))
 			{
-				armMotor.Set(-1.0);
+				armMotor.Set(ARM_REV);
 				jogTimer.Start();
 				jogTimer.Reset();
 				m_jogTimerRunning = true;
@@ -207,7 +286,7 @@ public:
 		{
 			if (kEventClosed == gamepad.GetEvent(BUTTON_COLLECTOR_FWD))
 			{
-				collectorMotor.Set(1.0);
+				collectorMotor.Set(COLLECTOR_FWD);
 				m_collectorMotorRunning = true;
 			}
 			else if (kEventOpened == gamepad.GetEvent(BUTTON_COLLECTOR_FWD))
@@ -217,7 +296,7 @@ public:
 			}
 			else if (kEventClosed == gamepad.GetEvent(BUTTON_COLLECTOR_REV))
 			{
-				collectorMotor.Set(-1.0);
+				collectorMotor.Set(COLLECTOR_REV);
 				m_collectorMotorRunning = true;
 			}
 			else if (kEventOpened == gamepad.GetEvent(BUTTON_COLLECTOR_REV))
@@ -234,8 +313,8 @@ public:
 		{
 			if (kEventClosed == gamepad.GetEvent(BUTTON_SHOOTER))
 			{
-				shooterMotor.Set(-0.5);
-				indexerMotor.Set(-0.5);
+				shooterMotor.Set(SHOOTER_FWD);
+				indexerMotor.Set(INDEXER_FWD);
 				m_shooterMotorRunning  = true;
 			}
 		}
