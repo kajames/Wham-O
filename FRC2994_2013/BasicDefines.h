@@ -20,8 +20,41 @@ typedef struct
 	bool enabled;
 } ButtonEntry;
 
-// Maximum Shifts Allowed
+typedef struct
+{
+	float speed_left;
+	float speed_right;
+	float distance;
+} step_speed;
+
+// Shaft Encoder distance/pulse
+// 8 inch wheel: PI*8/360 = 3.14159265*8/360 = .06981317 inches per pulse
+#define DRIVE_ENCODER_DISTANCE_PER_PULSE 	0.06981317
+
+// Table over motor speeds and travel distances for autonomous mode
+#define NUM_AUTONOMOUS_STEPS 2
+
+// Each entry in this table describes one move step in autonomous mode. The first
+// two entries in each row are the left and right motor speeds, respectively. The 
+// last entry is the absolute distance (in inches) that the left wheel must turn
+// before the step is complete.
+const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
+{
+		{0.4,-0.4,500},
+		{-0.4, 0.4, 300}
+};
+
+// Maximum Shifts Allowed (to make sure there is enough air for claw locks when 
+// climbing
 #define MAX_SHIFTS 20
+
+// Motor controller settings
+#define COLLECTOR_FWD 1.0
+#define COLLECTOR_REV -1.0
+#define INDEXER_FWD 0.4
+#define SHOOTER_FWD 1.0
+#define ARM_FWD 1.0
+#define ARM_REV -1.0
 
 // Define the target platfomr we are building for. We need this
 // because the hardware on Plyboy, WhamO-1 and WhamO-2 are 
@@ -32,6 +65,8 @@ typedef struct
 
 #ifdef PLYBOY
 #define NAME "Plyboy"
+#define LEFT_DRIVE_MOTOR Jaguar
+#define RIGHT_DRIVE_MOTOR Jaguar
 #define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
@@ -40,6 +75,8 @@ typedef struct
 
 #ifdef WHAMO1
 #define NAME "WhamO-1"
+#define LEFT_DRIVE_MOTOR Victor
+#define RIGHT_DRIVE_MOTOR Victor
 #define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
@@ -48,6 +85,8 @@ typedef struct
 
 #ifdef WHAMO2
 #define NAME "WhamO-2"
+#define LEFT_DRIVE_MOTOR Victor
+#define RIGHT_DRIVE_MOTOR Victor
 #define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
