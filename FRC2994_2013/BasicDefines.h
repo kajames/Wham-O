@@ -46,7 +46,7 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 
 // Maximum Shifts Allowed (to make sure there is enough air for claw locks when 
 // climbing
-#define MAX_SHIFTS 20
+#define MAX_SHIFTS 50
 
 // Motor controller settings
 #define COLLECTOR_FWD 1.0
@@ -59,8 +59,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 // Define the target platfomr we are building for. We need this
 // because the hardware on Plyboy, WhamO-1 and WhamO-2 are 
 // all different from one another
-#define PLYBOY
-//#define WHAMO1
+//#define PLYBOY
+#define WHAMO1
 //#define WHAMO2
 
 #ifdef PLYBOY
@@ -75,8 +75,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 
 #ifdef WHAMO1
 #define NAME "WhamO-1"
-#define LEFT_DRIVE_MOTOR Victor
-#define RIGHT_DRIVE_MOTOR Victor
+#define LEFT_DRIVE_MOTOR Jaguar		// This is very strange, but seems to work...
+#define RIGHT_DRIVE_MOTOR Jaguar	// TODO: Should be Victor. Victor causes no response.
 #define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
