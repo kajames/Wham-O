@@ -403,8 +403,8 @@ public:
 	{
 		myRobot.SetSafetyEnabled(true);
 		
-		gamepad.EnableButton(BUTTON_COLLECTOR_FWD);
-		gamepad.EnableButton(BUTTON_COLLECTOR_REV);
+//		gamepad.EnableButton(BUTTON_COLLECTOR_FWD);
+//		gamepad.EnableButton(BUTTON_COLLECTOR_REV);
 		gamepad.EnableButton(BUTTON_SHOOTER);
 		gamepad.EnableButton(BUTTON_CLAW_1_LOCKED);
 		gamepad.EnableButton(BUTTON_CLAW_2_LOCKED);
@@ -439,7 +439,7 @@ public:
 			greenClawLockSwitch.Update();
 			yellowClawLockSwitch.Update();
 			
-			HandleCollectorInputs();
+//			HandleCollectorInputs();
 			HandleDriverInputsManual();
 			HandleArmInputs();
 			HandleShooterInputs();
