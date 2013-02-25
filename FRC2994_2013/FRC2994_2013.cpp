@@ -14,8 +14,10 @@
 class RobotDemo : public SimpleRobot
 {
 	// Drive motors
-	LEFT_DRIVE_MOTOR leftDriveMotor; // Done BEFORE the robot drive which uses them
-	RIGHT_DRIVE_MOTOR rightDriveMotor;
+	LEFT_DRIVE_MOTOR leftFrontDriveMotor; // Done BEFORE the robot drive which uses them
+	LEFT_DRIVE_MOTOR leftRearDriveMotor;
+	RIGHT_DRIVE_MOTOR rightFrontDriveMotor;
+	RIGHT_DRIVE_MOTOR rightRearDriveMotor;
 	
 	// Drive system
 	RobotDrive myRobot; // robot drive system
@@ -60,9 +62,11 @@ class RobotDemo : public SimpleRobot
 
 public:
 	RobotDemo(void):
-		leftDriveMotor(LEFT_DRIVE_PWM),
-		rightDriveMotor(RIGHT_DRIVE_PWM),
-		myRobot(&leftDriveMotor, &rightDriveMotor),	// these must be initialized in the same order
+		leftFrontDriveMotor(LEFT_FRONT_DRIVE_PWM),
+		leftRearDriveMotor(LEFT_REAR_DRIVE_PWM),
+		rightFrontDriveMotor(RIGHT_FRONT_DRIVE_PWM),
+		rightRearDriveMotor(RIGHT_REAR_DRIVE_PWM),
+		myRobot(&leftFrontDriveMotor, &leftRearDriveMotor, &rightFrontDriveMotor, &rightRearDriveMotor),	// these must be initialized in the same order
 		stick(1),									// as they are declared above.
 		stick2(2),
 		gamepad(3),
@@ -123,8 +127,8 @@ public:
 		double reading;
 		
 		// Start moving the robot
-		leftDriveMotor.Set(speeds->speed_left);
-		rightDriveMotor.Set(speeds->speed_right);
+		leftFrontDriveMotor.Set(speeds->speed_left);
+		rightFrontDriveMotor.Set(speeds->speed_right);
 
 		reading = absolute(leftDriveEncoder.GetDistance());
 		
@@ -136,8 +140,8 @@ public:
 			dsLCD->UpdateLCD();
 		}
 		
-		leftDriveMotor.Set(0.0);
-		rightDriveMotor.Set(0.0);
+		leftFrontDriveMotor.Set(0.0);
+		rightFrontDriveMotor.Set(0.0);
 	}
 
 	void Autonomous(void)
@@ -231,21 +235,35 @@ public:
 				else
 				{
 					armMotor.Set(0.0);
-				}	
+				}
 			}
 			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kUp))
 			{
-				armMotor.Set(ARM_FWD);
-				jogTimer.Start();
-				jogTimer.Reset();
-				m_jogTimerRunning = true;
+				if (potentiometer.GetVoltage() > .5)
+				{
+					armMotor.Set(ARM_FWD);
+					jogTimer.Start();
+					jogTimer.Reset();
+					m_jogTimerRunning = true;
+				}
+				else
+				{
+					armMotor.Set(0.0);
+				}
 			}
 			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kDown))
 			{
-				armMotor.Set(ARM_REV);
-				jogTimer.Start();
-				jogTimer.Reset();
-				m_jogTimerRunning = true;
+				if (potentiometer.GetVoltage() > .5)
+				{
+					armMotor.Set(ARM_FWD);
+					jogTimer.Start();
+					jogTimer.Reset();
+					m_jogTimerRunning = true;
+				}
+				else
+				{
+					armMotor.Set(0.0);
+				}
 			}
 			else
 			{

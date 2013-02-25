@@ -60,12 +60,12 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 // because the hardware on Plyboy, WhamO-1 and WhamO-2 are 
 // all different from one another
 //#define PLYBOY
-#define WHAMO1
-//#define WHAMO2
+//#define WHAMO1
+#define WHAMO2
 
 #ifdef PLYBOY
 #define NAME "Plyboy"
-#define LEFT_DRIVE_MOTOR Jaguar
+#define LEFT_FRONT_DRIVE_MOTOR Jaguar
 #define RIGHT_DRIVE_MOTOR Jaguar
 #define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
@@ -85,8 +85,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 
 #ifdef WHAMO2
 #define NAME "WhamO-2"
-#define LEFT_DRIVE_MOTOR Victor
-#define RIGHT_DRIVE_MOTOR Victor
+#define LEFT_DRIVE_MOTOR Jaguar
+#define RIGHT_DRIVE_MOTOR Jaguar
 #define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
@@ -119,10 +119,10 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define UNUSED_ANALOG_INPUT_7 7
 
 // PWM Outputs
-#define LEFT_DRIVE_PWM 1
-#define UNUSED_PWM_OUTPUT_2 2
-#define RIGHT_DRIVE_PWM 3
-#define UNUSED_PWM_OUTPUT_4 4
+#define LEFT_FRONT_DRIVE_PWM 1
+#define LEFT_REAR_DRIVE_PWM 2
+#define RIGHT_FRONT_DRIVE_PWM 3
+#define RIGHT_REAR_DRIVE_PWM 4
 #define ARM_PWM 5
 #define UNUSED_PWM_OUTPUT_6 6
 #define SHOOTER_PWM 7
