@@ -219,7 +219,7 @@ public:
 			{
 				if (potentiometer.GetVoltage() < 4.5)
 				{
-					armMotor.Set(ARM_FWD);
+					armMotor.Set(ARM_REV);
 				}
 				else
 				{
@@ -230,7 +230,7 @@ public:
 			{
 				if (potentiometer.GetVoltage() > .5)
 				{
-					armMotor.Set(ARM_REV);
+					armMotor.Set(ARM_FWD);
 				}
 				else
 				{
@@ -239,9 +239,9 @@ public:
 			}
 			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kUp))
 			{
-				if (potentiometer.GetVoltage() > .5)
+				if (potentiometer.GetVoltage() < 4.5)
 				{
-					armMotor.Set(ARM_FWD);
+					armMotor.Set(ARM_REV);
 					jogTimer.Start();
 					jogTimer.Reset();
 					m_jogTimerRunning = true;
