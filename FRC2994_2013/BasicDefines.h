@@ -53,8 +53,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define COLLECTOR_REV -1.0
 #define INDEXER_FWD 0.4
 #define SHOOTER_FWD 1.0
-#define ARM_FWD 1.0
-#define ARM_REV -1.0
+#define ARM_DESCEND 1.0
+#define ARM_CLIMB -1.0
 
 // Define the target platfomr we are building for. We need this
 // because the hardware on Plyboy, WhamO-1 and WhamO-2 are 
@@ -71,6 +71,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
 #define ARM_MOTOR_CONTROLLER Jaguar
+#define GREEN_CLAW_LOCK_STATE (greenClawLockSwitch.GetState())
+#define YELLOW_CLAW_LOCK_STATE (yellowClawLockSwitch.GetState())
 #endif
 
 #ifdef WHAMO1
@@ -81,6 +83,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
 #define ARM_MOTOR_CONTROLLER Jaguar
+#define GREEN_CLAW_LOCK_STATE (!greenClawLockSwitch.GetState())
+#define YELLOW_CLAW_LOCK_STATE (!yellowClawLockSwitch.GetState())
 #endif
 
 #ifdef WHAMO2
@@ -91,6 +95,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
 #define ARM_MOTOR_CONTROLLER Jaguar
+#define GREEN_CLAW_LOCK_STATE (!greenClawLockSwitch.GetState())
+#define YELLOW_CLAW_LOCK_STATE (!yellowClawLockSwitch.GetState())
 #endif
 
 // Digital IOs
@@ -193,7 +199,7 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define UNUSED_SOLENOID_8 8
 
 // Various Constants
-#define JOG_TIME 0.5
+#define JOG_TIME 0.2
 #define SPINUP_TIME 1.0
 
 #endif

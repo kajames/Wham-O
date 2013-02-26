@@ -149,7 +149,7 @@ public:
 		myRobot.SetSafetyEnabled(false);
 		
 		// Move the arm to a level position
-		armMotor.Set(ARM_FWD);
+		armMotor.Set(ARM_DESCEND);
 		while (!((potentiometer.GetVoltage() > 2.4) && (potentiometer.GetVoltage() < 2.6))) 
 		{
 			// Check to make sure we don't overrotate the arm in either direction
@@ -219,7 +219,7 @@ public:
 			{
 				if (potentiometer.GetVoltage() < 4.5)
 				{
-					armMotor.Set(ARM_REV);
+					armMotor.Set(ARM_CLIMB);
 				}
 				else
 				{
@@ -230,7 +230,7 @@ public:
 			{
 				if (potentiometer.GetVoltage() > .5)
 				{
-					armMotor.Set(ARM_FWD);
+					armMotor.Set(ARM_DESCEND);
 				}
 				else
 				{
@@ -241,7 +241,7 @@ public:
 			{
 				if (potentiometer.GetVoltage() < 4.5)
 				{
-					armMotor.Set(ARM_REV);
+					armMotor.Set(ARM_CLIMB);
 					jogTimer.Start();
 					jogTimer.Reset();
 					m_jogTimerRunning = true;
@@ -255,7 +255,7 @@ public:
 			{
 				if (potentiometer.GetVoltage() > .5)
 				{
-					armMotor.Set(ARM_FWD);
+					armMotor.Set(ARM_DESCEND);
 					jogTimer.Start();
 					jogTimer.Reset();
 					m_jogTimerRunning = true;
@@ -400,12 +400,12 @@ public:
 		SmartDashboard::PutNumber("Potentiometer", potentiometer.GetVoltage());
 		
 		// Claw lock states
-		SmartDashboard::PutBoolean("Green Claw State", greenClawLockSwitch.GetState());
-		SmartDashboard::PutBoolean("Yellow Claw State", yellowClawLockSwitch.GetState());
+		SmartDashboard::PutBoolean("Green Claw State", GREEN_CLAW_LOCK_STATE);
+		SmartDashboard::PutBoolean("Yellow Claw State", YELLOW_CLAW_LOCK_STATE);
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "Green : %s", 
-			greenClawLockSwitch.GetState() ? "Locked" : "Unlocked");
+				GREEN_CLAW_LOCK_STATE ? "Locked" : "Unlocked");
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Yellow: %s", 
-			yellowClawLockSwitch.GetState() ? "Locked" : "Unlocked");
+				YELLOW_CLAW_LOCK_STATE ? "Locked" : "Unlocked");
 		
 		// Pneumatic shifter count
 		SmartDashboard::PutNumber("Shift Count", m_shiftCount);
