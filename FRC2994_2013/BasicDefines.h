@@ -55,6 +55,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define SHOOTER_FWD 1.0
 #define ARM_DESCEND 1.0
 #define ARM_CLIMB -1.0
+#define CLIMB_LIMIT .5f
+#define DESCEND_LIMIT 4.5f
 
 // Define the target platfomr we are building for. We need this
 // because the hardware on Plyboy, WhamO-1 and WhamO-2 are 

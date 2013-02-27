@@ -215,9 +215,10 @@ public:
 	{
 		if (!m_jogTimerRunning)
 		{
+			// Climb!
 			if (gamepad.GetLeftY() < -0.1)
 			{
-				if (potentiometer.GetVoltage() < 4.5)
+				if (potentiometer.GetVoltage() > CLIMB_LIMIT)
 				{
 					armMotor.Set(ARM_CLIMB);
 				}
@@ -226,9 +227,10 @@ public:
 					armMotor.Set(0.0);
 				}
 			}
+			// Descend
 			else if (gamepad.GetLeftY() > 0.1)
 			{
-				if (potentiometer.GetVoltage() > .5)
+				if (potentiometer.GetVoltage() < DESCEND_LIMIT)
 				{
 					armMotor.Set(ARM_DESCEND);
 				}
@@ -237,9 +239,10 @@ public:
 					armMotor.Set(0.0);
 				}
 			}
+			// Climb
 			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kUp))
 			{
-				if (potentiometer.GetVoltage() < 4.5)
+				if (potentiometer.GetVoltage() > CLIMB_LIMIT)
 				{
 					armMotor.Set(ARM_CLIMB);
 					jogTimer.Start();
@@ -251,9 +254,10 @@ public:
 					armMotor.Set(0.0);
 				}
 			}
+			// Descend
 			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kDown))
 			{
-				if (potentiometer.GetVoltage() > .5)
+				if (potentiometer.GetVoltage() < DESCEND_LIMIT)
 				{
 					armMotor.Set(ARM_DESCEND);
 					jogTimer.Start();
