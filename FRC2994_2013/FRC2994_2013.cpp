@@ -35,6 +35,7 @@ class RobotDemo : public SimpleRobot
 	
 	// Shaft encoders
 	Encoder leftDriveEncoder;
+	Encoder rightDriveEncoder;
 	
 	// Output Devices
 	DoubleSolenoid shifter;
@@ -75,6 +76,7 @@ public:
 		shooterMotor(SHOOTER_PWM),
 		armMotor (ARM_PWM),
 		leftDriveEncoder(LEFT_DRIVE_ENC_A, LEFT_DRIVE_ENC_B),
+		rightDriveEncoder(RIGHT_DRIVE_ENC_A, RIGHT_DRIVE_ENC_B),
 		shifter(SHIFTER_A,SHIFTER_B),
 		greenClaw(CLAW_1_LOCKED, CLAW_1_UNLOCKED),
 		yellowClaw(CLAW_2_LOCKED, CLAW_2_UNLOCKED),
@@ -336,32 +338,29 @@ public:
 	}
 	
 	void HandleShooterInputs()
-	{	
-		if (shooterTimer.HasPeriodPassed(SPINUP_TIME))
+	{
+		if (indexSwitch.GetEvent() == kEventOpened)
 		{
-			shooterTimer.Stop();
-			shooterTimer.Reset();
-			
+			indexerMotor.Set(0.0);
+		}
+		
+		if (kEventClosed == gamepad.GetEvent(BUTTON_RUN_SHOOTER))
+		{
+			if (!m_shooterMotorRunning)
+			{
+				m_shooterMotorRunning = true;
+				shooterMotor.Set(SHOOTER_FWD);
+			}
+			else
+			{
+				m_shooterMotorRunning = false;
+				shooterMotor.Set(0.0);
+			}
+		}
+		if (kEventClosed == gamepad.GetEvent(BUTTON_INDEXER))
+		{
 			indexerMotor.Set(INDEXER_FWD);
 		}
-		else if (!m_collectorMotorRunning && !m_shooterMotorRunning)
-		{
-			if (kEventClosed == gamepad.GetEvent(BUTTON_SHOOTER))
-			{
-				shooterMotor.Set(SHOOTER_FWD);
-				shooterTimer.Start();
-				m_shooterMotorRunning  = true;
-			}
-		}
-		else	
-		{
-			if (indexSwitch.GetEvent() == kEventOpened)
-			{
-				indexerMotor.Set(0.0);
-				shooterMotor.Set(0.0);
-				m_shooterMotorRunning  = false;
-			}
-		}		
 	}
 	
 	void HandleResetButton(void)
@@ -415,10 +414,10 @@ public:
 		SmartDashboard::PutNumber("Shift Count", m_shiftCount);
 		
 		// State viariables
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "CMR: %s SMR: %s JTR: %s",
-			m_collectorMotorRunning ? "T" : "F",
-			m_shooterMotorRunning ? "T" : "F",   
-			m_jogTimerRunning ? "T" : "F");
+//		dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "CMR: %s SMR: %s JTR: %s",
+//			m_collectorMotorRunning ? "T" : "F",
+//			m_shooterMotorRunning ? "T" : "F",   
+//			m_jogTimerRunning ? "T" : "F");
 	}
 	
 	void OperatorControl(void)
@@ -427,7 +426,7 @@ public:
 		
 //		gamepad.EnableButton(BUTTON_COLLECTOR_FWD);
 //		gamepad.EnableButton(BUTTON_COLLECTOR_REV);
-		gamepad.EnableButton(BUTTON_SHOOTER);
+//		gamepad.EnableButton(BUTTON_SHOOTER);
 		gamepad.EnableButton(BUTTON_CLAW_1_LOCKED);
 		gamepad.EnableButton(BUTTON_CLAW_2_LOCKED);
 		gamepad.EnableButton(BUTTON_CLAW_1_UNLOCKED);
@@ -435,6 +434,8 @@ public:
 		gamepad.EnableButton(BUTTON_STOP_ALL);
 		gamepad.EnableButton(BUTTON_JOG_FWD);
 		gamepad.EnableButton(BUTTON_JOG_REV);
+		gamepad.EnableButton(BUTTON_RUN_SHOOTER);
+		gamepad.EnableButton(BUTTON_INDEXER);
 
 		stick2.EnableButton(BUTTON_SHIFT);
 
@@ -467,6 +468,8 @@ public:
 			HandleShooterInputs();
 			HandleResetButton();
 			UpdateStatusDisplays();
+			
+			dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "%d,%d", leftDriveEncoder.Get(), rightDriveEncoder.Get());
 			
 			dsLCD->UpdateLCD();
 			Wait(0.005);				// wait for a motor update time

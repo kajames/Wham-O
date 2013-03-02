@@ -51,7 +51,7 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 // Motor controller settings
 #define COLLECTOR_FWD 1.0
 #define COLLECTOR_REV -1.0
-#define INDEXER_FWD 0.4
+#define INDEXER_FWD 0.6
 #define SHOOTER_FWD 1.0
 #define ARM_DESCEND 1.0
 #define ARM_CLIMB -1.0
@@ -139,10 +139,10 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define INDEX_PWM 10
 
 // Joystick 1
-#define UNUSED_BUTTON_1 1
+#define BUTTON_RUN_SHOOTER 1
 #define UNUSED_BUTTON_2 2
 #define UNUSED_BUTTON_3 3
-#define UNUSED_BUTTON_4 4 
+#define BUTTON_INDEXER 4 
 #define UNUSED_BUTTON_5 5
 #define UNUSED_BUTTON_6 6
 #define UNUSED_BUTTON_7 7
@@ -152,10 +152,10 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define UNUSED_BUTTON_11 11
 
 // Joystick 2
-#define UNUSED_BUTTON_1 1
+#define BUTTON_RUN_SHOOTER 1
 #define UNUSED_BUTTON_2 2
 #define UNUSED_BUTTON_3 3
-#define UNUSED_BUTTON_4 4 
+#define BUTTON_INDEXER 4 
 #define UNUSED_BUTTON_5 5
 #define UNUSED_BUTTON_6 6
 #define BUTTON_SHIFT 7
@@ -166,7 +166,7 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 
 
 // Gamepad Buttons
-#define UNUSED_BUTTON_1 1
+#define BUTTON_RUN_SHOOTER 1
 #define BUTTON_COLLECTOR_REV 2
 #define BUTTON_SHOOTER 3
 #define BUTTON_COLLECTOR_FWD 4
@@ -202,6 +202,6 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 
 // Various Constants
 #define JOG_TIME 0.2
-#define SPINUP_TIME 1.0
+#define SPINUP_TIME 3.0
 
 #endif
