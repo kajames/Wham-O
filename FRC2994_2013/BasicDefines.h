@@ -22,8 +22,8 @@ typedef struct
 
 typedef struct
 {
-	float speed_left;
-	float speed_right;
+	float magnitude;
+	float curve;
 	float distance;
 } step_speed;
 
@@ -40,8 +40,8 @@ typedef struct
 // before the step is complete.
 const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 {
-		{0.4,-0.4,500},
-		{-0.4, 0.4, 300}
+		{0.4,0.0,50},
+		{-0.4, 0.0,50}
 };
 
 // Maximum Shifts Allowed (to make sure there is enough air for claw locks when 
