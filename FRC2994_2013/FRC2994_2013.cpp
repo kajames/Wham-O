@@ -232,6 +232,23 @@ public:
 		}
 		t->Stop();
 		
+		// Shoot third disk again (just in case it didn'r fall into the shooter
+		// correctly after disk 2 was fired).
+		indexerMotor.Set(INDEXER_FWD);
+		indexSwitch.Update();
+		while (indexSwitch.GetEvent() != kEventOpened)
+		{
+			Wait(0.02);
+			indexSwitch.Update();
+		}
+		indexerMotor.Set(0.0);
+		t-> Start();
+		while(!t->HasPeriodPassed(1.15))
+		{
+			Wait(0.02);
+		}
+		t->Stop();
+		
 		// Stop everything
 		shooterMotor.Set(0.0);
 		indexerMotor.Set(0.0);
