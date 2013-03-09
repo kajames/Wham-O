@@ -51,9 +51,9 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 // Motor controller settings
 #define COLLECTOR_FWD 1.0
 #define COLLECTOR_REV -1.0
-#define INDEXER_FWD 0.6
+#define INDEXER_FWD 0.85
 #define SHOOTER_FWD 1.0
-#define ARM_DESCEND 1.0
+#define ARM_DESCEND 0.2
 #define ARM_CLIMB -1.0
 #define CLIMB_LIMIT .5f
 #define DESCEND_LIMIT 4.5f
@@ -201,7 +201,7 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define UNUSED_SOLENOID_8 8
 
 // Various Constants
-#define JOG_TIME 0.2
+#define JOG_TIME 0.1
 #define SPINUP_TIME 3.0
 
 #endif

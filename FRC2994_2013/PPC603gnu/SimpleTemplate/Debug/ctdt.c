@@ -47,6 +47,8 @@ void _GLOBAL__I__ZN12NetworkTable19PATH_SEPARATOR_CHARE();
 
 void _GLOBAL__I__ZN16NetworkTableMode6ServerE();
 
+void _GLOBAL__I__ZN30AbstractNetworkTableEntryStoreC2ER20TableListenerManager();
+
 void _GLOBAL__I_OutgoingEntryReceiver_NULL();
 
 void _GLOBAL__I__ZN12WriteManagerC2ER30FlushableOutgoingEntryReceiverR15NTThreadManagerR30AbstractNetworkTableEntryStorem();
@@ -88,6 +90,7 @@ void (*_ctors[])() =
     _GLOBAL__I_AxisCamera_debugFlag,
     _GLOBAL__I__ZN12NetworkTable19PATH_SEPARATOR_CHARE,
     _GLOBAL__I__ZN16NetworkTableMode6ServerE,
+    _GLOBAL__I__ZN30AbstractNetworkTableEntryStoreC2ER20TableListenerManager,
     _GLOBAL__I_OutgoingEntryReceiver_NULL,
     _GLOBAL__I__ZN12WriteManagerC2ER30FlushableOutgoingEntryReceiverR15NTThreadManagerR30AbstractNetworkTableEntryStorem,
     _GLOBAL__I__ZN21ClientConnectionState24DISCONNECTED_FROM_SERVERE,
@@ -132,6 +135,8 @@ void _GLOBAL__D_AxisCamera_debugFlag();
 
 void _GLOBAL__D__ZN12NetworkTable19PATH_SEPARATOR_CHARE();
 
+void _GLOBAL__D__ZN30AbstractNetworkTableEntryStoreC2ER20TableListenerManager();
+
 void _GLOBAL__D_OutgoingEntryReceiver_NULL();
 
 void _GLOBAL__D__ZN12WriteManagerC2ER30FlushableOutgoingEntryReceiverR15NTThreadManagerR30AbstractNetworkTableEntryStorem();
@@ -167,6 +172,7 @@ void (*_dtors[])() =
     _GLOBAL__D__ZN10Ultrasonic9kPingTimeE,
     _GLOBAL__D_AxisCamera_debugFlag,
     _GLOBAL__D__ZN12NetworkTable19PATH_SEPARATOR_CHARE,
+    _GLOBAL__D__ZN30AbstractNetworkTableEntryStoreC2ER20TableListenerManager,
     _GLOBAL__D_OutgoingEntryReceiver_NULL,
     _GLOBAL__D__ZN12WriteManagerC2ER30FlushableOutgoingEntryReceiverR15NTThreadManagerR30AbstractNetworkTableEntryStorem,
     _GLOBAL__D__ZN18NetworkTableServerC2ER16IOStreamProviderR28NetworkTableEntryTypeManagerR15NTThreadManager,

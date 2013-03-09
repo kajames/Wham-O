@@ -100,6 +100,7 @@ public:
 		
 #ifdef WHAMO1
 		myRobot.SetInvertedMotor(RobotDrive::kRearLeftMotor, true); 
+		myRobot.SetInvertedMotor(RobotDrive::kFrontLeftMotor, true); 
 #endif
 		
 		dsLCD->UpdateLCD();
@@ -139,7 +140,6 @@ public:
 		{
 			Wait(0.02);
 			reading = absolute(leftDriveEncoder.GetDistance());
-			dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "D: %5.0f R : %5.0f", dist, reading);
 			dsLCD->UpdateLCD();
 		}
 		
@@ -149,6 +149,8 @@ public:
 
 	void Autonomous(void)
 	{
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "auto");
+		dsLCD->UpdateLCD();
 		myRobot.SetSafetyEnabled(false);
 		indexSwitch.Update();
 		indexSwitch.Update();
@@ -179,7 +181,7 @@ public:
 		shooterMotor.Set(SHOOTER_FWD);
 
 		// Wait for the shooter motor to spin up to speed
-		while(!t->HasPeriodPassed(2.5))
+		while(IsAutonomous() && !t->HasPeriodPassed(3.5))
 		{
 			Wait(0.02);
 		}
@@ -187,14 +189,14 @@ public:
 		
 		// Shoot first disk
 		indexerMotor.Set(INDEXER_FWD);
-		while (indexSwitch.GetEvent() != kEventOpened)
+		while (IsAutonomous() && indexSwitch.GetEvent() != kEventOpened)
 		{
 			Wait(0.02);
 			indexSwitch.Update();
 		}
 		indexerMotor.Set(0.0);
 		t-> Start();
-		while(!t->HasPeriodPassed(1.15))
+		while(IsAutonomous() && !t->HasPeriodPassed(1.15))
 		{
 			Wait(0.02);
 		}
@@ -203,14 +205,14 @@ public:
 		// Shoot second disk
 		indexerMotor.Set(INDEXER_FWD);
 		indexSwitch.Update();
-		while (indexSwitch.GetEvent() != kEventOpened)
+		while (IsAutonomous() && indexSwitch.GetEvent() != kEventOpened)
 		{
 			Wait(0.02);
 			indexSwitch.Update();
 		}
 		indexerMotor.Set(0.0);
 		t-> Start();
-		while(!t->HasPeriodPassed(1.15))
+		while(IsAutonomous() && !t->HasPeriodPassed(1.15))
 		{
 			Wait(0.02);
 		}
@@ -219,14 +221,14 @@ public:
 		// Shoot third disk
 		indexerMotor.Set(INDEXER_FWD);
 		indexSwitch.Update();
-		while (indexSwitch.GetEvent() != kEventOpened)
+		while (IsAutonomous() && indexSwitch.GetEvent() != kEventOpened)
 		{
 			Wait(0.02);
 			indexSwitch.Update();
 		}
 		indexerMotor.Set(0.0);
 		t-> Start();
-		while(!t->HasPeriodPassed(1.15))
+		while(IsAutonomous() && !t->HasPeriodPassed(1.15))
 		{
 			Wait(0.02);
 		}
@@ -236,14 +238,14 @@ public:
 		// correctly after disk 2 was fired).
 		indexerMotor.Set(INDEXER_FWD);
 		indexSwitch.Update();
-		while (indexSwitch.GetEvent() != kEventOpened)
+		while (IsAutonomous() && indexSwitch.GetEvent() != kEventOpened)
 		{
 			Wait(0.02);
 			indexSwitch.Update();
 		}
 		indexerMotor.Set(0.0);
 		t-> Start();
-		while(!t->HasPeriodPassed(1.15))
+		while(IsAutonomous() && !t->HasPeriodPassed(1.15))
 		{
 			Wait(0.02);
 		}
@@ -253,17 +255,21 @@ public:
 		shooterMotor.Set(0.0);
 		indexerMotor.Set(0.0);
 		t -> Stop();
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "auto");
+		dsLCD->UpdateLCD();
 	}
 	
 	void HandleDriverInputsManual(void)
 	{
-		myRobot.ArcadeDrive(stick);
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "hdi");
+		dsLCD->UpdateLCD();
+		myRobot.ArcadeDrive(stick.GetX(), stick.GetY());
 		if(kEventClosed == stick2.GetEvent(BUTTON_SHIFT))
 		{
 			if (m_shiftCount)
 			{
 				// Shift into high gear.
-				shifter.Set(DoubleSolenoid::kForward);
+				shifter.Set(DoubleSolenoid::kReverse);
 				m_shiftCount--;
 			}
 		}
@@ -272,10 +278,13 @@ public:
 			if (m_shiftCount)
 			{
 				// Shift into low gear.
-				shifter.Set(DoubleSolenoid::kReverse);
+				shifter.Set(DoubleSolenoid::kForward);
 				m_shiftCount--;
 			}
 		}
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "hdi");
+		dsLCD->UpdateLCD();
+
 	}
 
 	void HandleDriverInputsAutomatic(void)
@@ -285,6 +294,8 @@ public:
 	
 	void HandleArmInputs(void)
 	{
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "hai");
+		dsLCD->UpdateLCD();
 		if (!m_jogTimerRunning)
 		{
 			// Climb!
@@ -292,7 +303,7 @@ public:
 			{
 				if (potentiometer.GetVoltage() > CLIMB_LIMIT)
 				{
-					armMotor.Set(ARM_CLIMB);
+					armMotor.Set(gamepad.GetLeftY());
 				}
 				else
 				{
@@ -304,7 +315,7 @@ public:
 			{
 				if (potentiometer.GetVoltage() < DESCEND_LIMIT)
 				{
-					armMotor.Set(ARM_DESCEND);
+					armMotor.Set(gamepad.GetLeftY());
 				}
 				else
 				{
@@ -370,7 +381,8 @@ public:
 		{
 			yellowClaw.Set(DoubleSolenoid::kReverse);
 		}
-		
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "hai");
+		dsLCD->UpdateLCD();
 	}
 	
 	// This method reads two buttons on the gamepad: one for forward motion of
@@ -382,6 +394,8 @@ public:
 	
 	void HandleCollectorInputs ()
 	{		
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "hci");
+		dsLCD->UpdateLCD();
 		if (false == m_shooterMotorRunning)
 		{
 			if (kEventClosed == gamepad.GetEvent(BUTTON_COLLECTOR_FWD))
@@ -405,10 +419,14 @@ public:
 				m_collectorMotorRunning = false;
 			}
 		}
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "hci");
+		dsLCD->UpdateLCD();
 	}
 	
 	void HandleShooterInputs()
 	{
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "hsi");
+		dsLCD->UpdateLCD();
 		if (indexSwitch.GetEvent() == kEventOpened)
 		{
 			indexerMotor.Set(0.0);
@@ -431,10 +449,14 @@ public:
 		{
 			indexerMotor.Set(INDEXER_FWD);
 		}
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "hsi");
+		dsLCD->UpdateLCD();
 	}
 	
 	void HandleResetButton(void)
 	{
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "hrb");
+		dsLCD->UpdateLCD();
 		if (gamepad.GetEvent(BUTTON_STOP_ALL) == kEventClosed)
 		{
 			collectorMotor.Set(0.0);
@@ -450,10 +472,14 @@ public:
 			jogTimer.Reset();
 			m_jogTimerRunning = false;
 		}
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "hsi");
+		dsLCD->UpdateLCD();
 	}
 
 	void UpdateStatusDisplays(void)
-	{		
+	{
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "usd");
+		dsLCD->UpdateLCD();
 		// Joystick values
 		SmartDashboard::PutNumber("stickX", stick.GetX());
 		SmartDashboard::PutNumber("stickY", stick.GetY());
@@ -469,16 +495,11 @@ public:
 		SmartDashboard::PutNumber("armMotor", armMotor.Get());
 
 		// Arm position via potentiometer voltage (2.5 volts is center position)
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "Voltage: %3.1f", potentiometer.GetVoltage());
 		SmartDashboard::PutNumber("Potentiometer", potentiometer.GetVoltage());
 		
 		// Claw lock states
 		SmartDashboard::PutBoolean("Green Claw State", GREEN_CLAW_LOCK_STATE);
 		SmartDashboard::PutBoolean("Yellow Claw State", YELLOW_CLAW_LOCK_STATE);
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "Green : %s", 
-				GREEN_CLAW_LOCK_STATE ? "Locked" : "Unlocked");
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Yellow: %s", 
-				YELLOW_CLAW_LOCK_STATE ? "Locked" : "Unlocked");
 		
 		// Pneumatic shifter count
 		SmartDashboard::PutNumber("Shift Count", m_shiftCount);
@@ -488,11 +509,16 @@ public:
 //			m_collectorMotorRunning ? "T" : "F",
 //			m_shooterMotorRunning ? "T" : "F",   
 //			m_jogTimerRunning ? "T" : "F");
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "usd");
+		dsLCD->UpdateLCD();
 	}
 	
 	void OperatorControl(void)
 	{
-		myRobot.SetSafetyEnabled(true);
+		int sanity = 0;
+		shifter.Set(DoubleSolenoid::kForward);
+		
+		myRobot.SetSafetyEnabled(false);
 		
 //		gamepad.EnableButton(BUTTON_COLLECTOR_FWD);
 //		gamepad.EnableButton(BUTTON_COLLECTOR_REV);
@@ -539,7 +565,10 @@ public:
 			HandleResetButton();
 			UpdateStatusDisplays();
 			
-			dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "%d,%d", leftDriveEncoder.Get(), rightDriveEncoder.Get());
+			sanity++;
+			
+			
+			dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "s:%d", sanity);
 			
 			dsLCD->UpdateLCD();
 			Wait(0.005);				// wait for a motor update time
