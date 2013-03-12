@@ -149,8 +149,6 @@ public:
 
 	void Autonomous(void)
 	{
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "auto");
-		dsLCD->UpdateLCD();
 		myRobot.SetSafetyEnabled(false);
 		indexSwitch.Update();
 		indexSwitch.Update();
@@ -179,7 +177,7 @@ public:
 		t->Start();
 		
 		shooterMotor.Set(SHOOTER_FWD);
-
+		
 		// Wait for the shooter motor to spin up to speed
 		while(IsAutonomous() && !t->HasPeriodPassed(3.5))
 		{
@@ -255,14 +253,10 @@ public:
 		shooterMotor.Set(0.0);
 		indexerMotor.Set(0.0);
 		t -> Stop();
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "auto");
-		dsLCD->UpdateLCD();
 	}
 	
 	void HandleDriverInputsManual(void)
 	{
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "hdi");
-		dsLCD->UpdateLCD();
 		myRobot.ArcadeDrive(stick.GetX(), stick.GetY());
 		if(kEventClosed == stick2.GetEvent(BUTTON_SHIFT))
 		{
@@ -282,9 +276,6 @@ public:
 				m_shiftCount--;
 			}
 		}
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "hdi");
-		dsLCD->UpdateLCD();
-
 	}
 
 	void HandleDriverInputsAutomatic(void)
@@ -294,8 +285,6 @@ public:
 	
 	void HandleArmInputs(void)
 	{
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "hai");
-		dsLCD->UpdateLCD();
 		if (!m_jogTimerRunning)
 		{
 			// Climb!
@@ -381,8 +370,6 @@ public:
 		{
 			yellowClaw.Set(DoubleSolenoid::kReverse);
 		}
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "hai");
-		dsLCD->UpdateLCD();
 	}
 	
 	// This method reads two buttons on the gamepad: one for forward motion of
@@ -393,9 +380,7 @@ public:
 	// (doing nothing) if the controls are released.
 	
 	void HandleCollectorInputs ()
-	{		
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "hci");
-		dsLCD->UpdateLCD();
+	{
 		if (false == m_shooterMotorRunning)
 		{
 			if (kEventClosed == gamepad.GetEvent(BUTTON_COLLECTOR_FWD))
@@ -419,14 +404,10 @@ public:
 				m_collectorMotorRunning = false;
 			}
 		}
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "hci");
-		dsLCD->UpdateLCD();
 	}
 	
 	void HandleShooterInputs()
 	{
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "hsi");
-		dsLCD->UpdateLCD();
 		if (indexSwitch.GetEvent() == kEventOpened)
 		{
 			indexerMotor.Set(0.0);
@@ -449,14 +430,10 @@ public:
 		{
 			indexerMotor.Set(INDEXER_FWD);
 		}
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "hsi");
-		dsLCD->UpdateLCD();
 	}
 	
 	void HandleResetButton(void)
 	{
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "hrb");
-		dsLCD->UpdateLCD();
 		if (gamepad.GetEvent(BUTTON_STOP_ALL) == kEventClosed)
 		{
 			collectorMotor.Set(0.0);
@@ -472,14 +449,10 @@ public:
 			jogTimer.Reset();
 			m_jogTimerRunning = false;
 		}
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "hsi");
-		dsLCD->UpdateLCD();
 	}
 
 	void UpdateStatusDisplays(void)
 	{
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 's', "usd");
-		dsLCD->UpdateLCD();
 		// Joystick values
 		SmartDashboard::PutNumber("stickX", stick.GetX());
 		SmartDashboard::PutNumber("stickY", stick.GetY());
@@ -509,14 +482,12 @@ public:
 //			m_collectorMotorRunning ? "T" : "F",
 //			m_shooterMotorRunning ? "T" : "F",   
 //			m_jogTimerRunning ? "T" : "F");
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "a:%c%s", 'e', "usd");
-		dsLCD->UpdateLCD();
 	}
 	
 	void OperatorControl(void)
 	{
 		int sanity = 0;
-		shifter.Set(DoubleSolenoid::kForward);
+		shifter.Set(DoubleSolenoid::kReverse);
 		
 		myRobot.SetSafetyEnabled(false);
 		
@@ -563,10 +534,13 @@ public:
 			HandleArmInputs();
 			HandleShooterInputs();
 			HandleResetButton();
-			UpdateStatusDisplays();
+//			UpdateStatusDisplays();
+			
+			dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "G: %s", (GREEN_CLAW_LOCK_STATE ? "Locked" : "Unlocked"));
+			
+			dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Y: %s", (YELLOW_CLAW_LOCK_STATE ? "Locked" : "Unlocked"));
 			
 			sanity++;
-			
 			
 			dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "s:%d", sanity);
 			
