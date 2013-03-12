@@ -203,5 +203,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 // Various Constants
 #define JOG_TIME 0.1
 #define SPINUP_TIME 3.0
+// A constant defining how significant a change in the value of the arm potentiometer
+// has to be for it to be sent to the driver station.
+#define POT_EPSILON 0.1f
 
 #endif
