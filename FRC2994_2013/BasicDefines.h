@@ -34,6 +34,10 @@ typedef struct
 // Table over motor speeds and travel distances for autonomous mode
 #define NUM_AUTONOMOUS_STEPS 2
 
+// The robot only carries three disks, but sometimes the third one gets stuck.
+// We shoot a fourth time to make sure we've gotten rid of the pesky third one...
+#define NUM_AUTONOMOUS_DISKS 4
+
 // Each entry in this table describes one move step in autonomous mode. The first
 // two entries in each row are the left and right motor speeds, respectively. The 
 // last entry is the absolute distance (in inches) that the left wheel must turn

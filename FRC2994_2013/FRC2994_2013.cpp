@@ -148,112 +148,51 @@ public:
 		rightFrontDriveMotor.Set(0.0);
 	}
 
+	// Shoot a single disk by cycling the indexer once and then
+	// pausing to let the shooter motor spin back up to full speed.
+	void DoAutonomousShootOneDisk()
+	{		
+		// Unless the caller does an update, we will still see the openEvent
+		// if we call getEvent unless we do an update here
+		indexSwitch.Update();
+
+		indexerMotor.Set(INDEXER_FWD);
+
+		// Wait for the indexer to cycle once
+		while (IsAutonomous() && indexSwitch.GetEvent() != kEventOpened)
+		{
+			Wait(0.02);
+			indexSwitch.Update();
+		}
+
+		indexerMotor.Set(0.0);
+
+		// Let the shooter motor get back up to full speed
+		Wait(1.15);	
+	}
+
 	void Autonomous(void)
 	{
 		myRobot.SetSafetyEnabled(false);
+
+		// Read twice to make sure there are no false events
+		// due to a comparison against a default initial value.
 		indexSwitch.Update();
 		indexSwitch.Update();
-		
-		// Move the arm to a level position
-//		armMotor.Set(ARM_DESCEND);
-//		while (!((potentiometer.GetVoltage() > 2.4) && (potentiometer.GetVoltage() < 2.6))) 
-//		{
-//			// Check to make sure we don't overrotate the arm in either direction
-//			if (potentiometer.GetVoltage() > 4.5 || potentiometer.GetVoltage() < 0.5)
-//			{
-//				armMotor.Set(0.0);
-//				return;
-//			}
-//			Wait(0.2);
-//			UpdateStatusDisplays();
-//		}
-//		armMotor.Set(0.0);
-//		
-		// Drive robot 
-		
-//		DoAutonomousMoveStep(&m_autoForward[0], "Moving...");
-//		DoAutonomousMoveStep(&m_autoForward[1], "Moving...");
-//		
-		Timer* t = new Timer();
-		t->Start();
-		
+
 		shooterMotor.Set(SHOOTER_FWD);
-		
+
 		// Wait for the shooter motor to spin up to speed
-		while(IsAutonomous() && !t->HasPeriodPassed(3.5))
+		Wait(2.5);
+
+		// Shoot the disks
+		for (int i = 0; i < NUM_AUTONOMOUS_DISKS; i++)
 		{
-			Wait(0.02);
+			DoAutonomousShootOneDisk();
 		}
-		t-> Stop();
-		
-		// Shoot first disk
-		indexerMotor.Set(INDEXER_FWD);
-		while (IsAutonomous() && indexSwitch.GetEvent() != kEventOpened)
-		{
-			Wait(0.02);
-			indexSwitch.Update();
-		}
-		indexerMotor.Set(0.0);
-		t-> Start();
-		while(IsAutonomous() && !t->HasPeriodPassed(1.15))
-		{
-			Wait(0.02);
-		}
-		t->Stop();
-		
-		// Shoot second disk
-		indexerMotor.Set(INDEXER_FWD);
-		indexSwitch.Update();
-		while (IsAutonomous() && indexSwitch.GetEvent() != kEventOpened)
-		{
-			Wait(0.02);
-			indexSwitch.Update();
-		}
-		indexerMotor.Set(0.0);
-		t-> Start();
-		while(IsAutonomous() && !t->HasPeriodPassed(1.15))
-		{
-			Wait(0.02);
-		}
-		t->Stop();
-		
-		// Shoot third disk
-		indexerMotor.Set(INDEXER_FWD);
-		indexSwitch.Update();
-		while (IsAutonomous() && indexSwitch.GetEvent() != kEventOpened)
-		{
-			Wait(0.02);
-			indexSwitch.Update();
-		}
-		indexerMotor.Set(0.0);
-		t-> Start();
-		while(IsAutonomous() && !t->HasPeriodPassed(1.15))
-		{
-			Wait(0.02);
-		}
-		t->Stop();
-		
-		// Shoot third disk again (just in case it didn'r fall into the shooter
-		// correctly after disk 2 was fired).
-		indexerMotor.Set(INDEXER_FWD);
-		indexSwitch.Update();
-		while (IsAutonomous() && indexSwitch.GetEvent() != kEventOpened)
-		{
-			Wait(0.02);
-			indexSwitch.Update();
-		}
-		indexerMotor.Set(0.0);
-		t-> Start();
-		while(IsAutonomous() && !t->HasPeriodPassed(1.15))
-		{
-			Wait(0.02);
-		}
-		t->Stop();
-		
-		// Stop everything
-		shooterMotor.Set(0.0);
-		indexerMotor.Set(0.0);
-		t -> Stop();
+
+		// Move the robot to a position closer to out feeder station 
+		//		DoAutonomousMoveStep(&m_autoForward[0], "Backing up...");
 	}
 	
 	void HandleDriverInputsManual(void)
