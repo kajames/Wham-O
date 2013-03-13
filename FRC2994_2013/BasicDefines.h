@@ -53,8 +53,6 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define MAX_SHIFTS 50
 
 // Motor controller settings
-#define COLLECTOR_FWD 1.0
-#define COLLECTOR_REV -1.0
 #define INDEXER_FWD 0.85
 #define SHOOTER_FWD 1.0
 #define ARM_DESCEND 0.2
@@ -65,15 +63,14 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 // Define the target platfomr we are building for. We need this
 // because the hardware on Plyboy, WhamO-1 and WhamO-2 are 
 // all different from one another
-#define PLYBOY
-//#define WHAMO1
+//#define PLYBOY
+#define WHAMO1
 //#define WHAMO2
 
 #ifdef PLYBOY
 #define NAME "Plyboy"
 #define LEFT_DRIVE_MOTOR Jaguar
 #define RIGHT_DRIVE_MOTOR Jaguar
-#define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
 #define ARM_MOTOR_CONTROLLER Jaguar
@@ -83,24 +80,22 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 
 #ifdef WHAMO1
 #define NAME "WhamO-1"
-#define LEFT_DRIVE_MOTOR Jaguar		// This is very strange, but seems to work...
-#define RIGHT_DRIVE_MOTOR Jaguar	// TODO: Should be Victor. Victor causes no response.
-#define COLLECTOR_MOTOR_CONTROLLER Jaguar
+#define LEFT_DRIVE_MOTOR Victor
+#define RIGHT_DRIVE_MOTOR Victor
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
-#define ARM_MOTOR_CONTROLLER Jaguar
+#define ARM_MOTOR_CONTROLLER Talon
 #define GREEN_CLAW_LOCK_STATE (!greenClawLockSwitch.GetState())
 #define YELLOW_CLAW_LOCK_STATE (!yellowClawLockSwitch.GetState())
 #endif
 
 #ifdef WHAMO2
 #define NAME "WhamO-2"
-#define LEFT_DRIVE_MOTOR Jaguar
-#define RIGHT_DRIVE_MOTOR Jaguar
-#define COLLECTOR_MOTOR_CONTROLLER Jaguar
+#define LEFT_DRIVE_MOTOR Victor
+#define RIGHT_DRIVE_MOTOR Victor
 #define INDEXER_MOTOR_CONTROLLER Jaguar
 #define SHOOTER_MOTOR_CONTROLLER Jaguar
-#define ARM_MOTOR_CONTROLLER Jaguar
+#define ARM_MOTOR_CONTROLLER Victor
 #define GREEN_CLAW_LOCK_STATE (!greenClawLockSwitch.GetState())
 #define YELLOW_CLAW_LOCK_STATE (!yellowClawLockSwitch.GetState())
 #endif
@@ -110,8 +105,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define LEFT_DRIVE_ENC_B 2
 #define RIGHT_DRIVE_ENC_A 3
 #define RIGHT_DRIVE_ENC_B 4
-#define CLAW_1_LOCK_SENSOR 5
-#define CLAW_2_LOCK_SENSOR 6
+#define GREEN_LOCK_SENSOR 5
+#define YELLOW_LOCK_SENSOR 6
 #define INDEXER_SW 7
 #define COMPRESSOR_PRESSURE_SW 8
 #define UNUSED_DIO_9 9
@@ -143,10 +138,10 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define INDEX_PWM 10
 
 // Joystick 1
-#define BUTTON_RUN_SHOOTER 1
+#define UNUSED_BUTTON_1 1
 #define UNUSED_BUTTON_2 2
 #define UNUSED_BUTTON_3 3
-#define BUTTON_INDEXER 4 
+#define UNUSED_BUTTON_4 4 
 #define UNUSED_BUTTON_5 5
 #define UNUSED_BUTTON_6 6
 #define UNUSED_BUTTON_7 7
@@ -156,10 +151,10 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define UNUSED_BUTTON_11 11
 
 // Joystick 2
-#define BUTTON_RUN_SHOOTER 1
+#define UNUSED_BUTTON_1 1
 #define UNUSED_BUTTON_2 2
 #define UNUSED_BUTTON_3 3
-#define BUTTON_INDEXER 4 
+#define UNUSED_BUTTON_4 4 
 #define UNUSED_BUTTON_5 5
 #define UNUSED_BUTTON_6 6
 #define BUTTON_SHIFT 7
@@ -170,14 +165,14 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 
 
 // Gamepad Buttons
-#define BUTTON_RUN_SHOOTER 1
-#define BUTTON_COLLECTOR_REV 2
-#define BUTTON_SHOOTER 3
-#define BUTTON_COLLECTOR_FWD 4
-#define BUTTON_CLAW_1_LOCKED 5
-#define BUTTON_CLAW_2_LOCKED 6
-#define BUTTON_CLAW_1_UNLOCKED 7
-#define BUTTON_CLAW_2_UNLOCKED 8
+#define BUTTON_TOGGLE_SHOOTER 1
+#define UNUSED_BUTTON_2 2
+#define UNUSED_BUTTON_3 3
+#define BUTTON_INDEXER 4
+#define BUTTON_GREEN_CLAW_LOCKED 5
+#define BUTTON_YELLOW_CLAW_LOCKED 6
+#define BUTTON_GREEN_CLAW_UNLOCKED 7
+#define BUTTON_YELLOW_CLAW_UNLOCKED 8
 #define UNUSED_BUTTON_9 9
 #define BUTTON_STOP_ALL 10
 #define BUTTON_JOG_FWD 11
@@ -197,10 +192,10 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 //Solenoid
 #define SHIFTER_A 1
 #define SHIFTER_B 2
-#define CLAW_1_LOCKED 3
-#define CLAW_1_UNLOCKED 4
-#define CLAW_2_LOCKED 5
-#define CLAW_2_UNLOCKED 6
+#define GREEN_CLAW_LOCKED 3
+#define GREEN_CLAW_UNLOCKED 4
+#define YELLOW_CLAW_LOCKED 5
+#define YELLOW_CLAW_UNLOCKED 6
 #define UNUSED_SOLENOID_7 7
 #define UNUSED_SOLENOID_8 8
 

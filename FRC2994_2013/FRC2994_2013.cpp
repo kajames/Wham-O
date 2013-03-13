@@ -28,7 +28,6 @@ class RobotDemo : public SimpleRobot
 	EGamepad  gamepad;
 	
 	// Other Motor Controllers (macros used because of differing hw on plyboy and bots)
-	COLLECTOR_MOTOR_CONTROLLER collectorMotor;
 	INDEXER_MOTOR_CONTROLLER   indexerMotor;
 	SHOOTER_MOTOR_CONTROLLER   shooterMotor;
 	ARM_MOTOR_CONTROLLER       armMotor;
@@ -44,7 +43,7 @@ class RobotDemo : public SimpleRobot
 	
 	// Input sensors
 	AnalogChannel potentiometer;
-	EDigitalInput indexSwitch;
+	EDigitalInput indexerSwitch;
 	EDigitalInput greenClawLockSwitch;
 	EDigitalInput yellowClawLockSwitch;
 	
@@ -54,7 +53,6 @@ class RobotDemo : public SimpleRobot
 	Timer shooterTimer;
 
 	// Nonobject members
-	bool m_collectorMotorRunning;
 	bool m_shooterMotorRunning;
 	bool m_jogTimerRunning;
 	int  m_shiftCount;
@@ -72,24 +70,22 @@ public:
 		stick(1),									// as they are declared above.
 		stick2(2),
 		gamepad(3),
-		collectorMotor(PICKUP_PWM),
 		indexerMotor(INDEX_PWM),
 		shooterMotor(SHOOTER_PWM),
 		armMotor (ARM_PWM),
 		leftDriveEncoder(LEFT_DRIVE_ENC_A, LEFT_DRIVE_ENC_B),
 		rightDriveEncoder(RIGHT_DRIVE_ENC_A, RIGHT_DRIVE_ENC_B),
 		shifter(SHIFTER_A,SHIFTER_B),
-		greenClaw(CLAW_1_LOCKED, CLAW_1_UNLOCKED),
-		yellowClaw(CLAW_2_LOCKED, CLAW_2_UNLOCKED),
+		greenClaw(GREEN_CLAW_LOCKED, GREEN_CLAW_UNLOCKED),
+		yellowClaw(YELLOW_CLAW_LOCKED, YELLOW_CLAW_UNLOCKED),
 		potentiometer(ARM_ROTATION_POT),
-		indexSwitch(INDEXER_SW),
-		greenClawLockSwitch(CLAW_1_LOCK_SENSOR),
-		yellowClawLockSwitch(CLAW_2_LOCK_SENSOR),
+		indexerSwitch(INDEXER_SW),
+		greenClawLockSwitch(GREEN_LOCK_SENSOR),
+		yellowClawLockSwitch(YELLOW_LOCK_SENSOR),
 		compressor(COMPRESSOR_PRESSURE_SW, COMPRESSOR_SPIKE),
 		jogTimer(),
 		shooterTimer()
 	{
-		m_collectorMotorRunning = false;
 		m_shooterMotorRunning   = false;
 		m_jogTimerRunning       = false;
 		m_shiftCount            = MAX_SHIFTS;
@@ -151,18 +147,18 @@ public:
 	// Shoot a single disk by cycling the indexer once and then
 	// pausing to let the shooter motor spin back up to full speed.
 	void DoAutonomousShootOneDisk()
-	{		
+	{
 		// Unless the caller does an update, we will still see the openEvent
 		// if we call getEvent unless we do an update here
-		indexSwitch.Update();
+		indexerSwitch.Update();
 
 		indexerMotor.Set(INDEXER_FWD);
 
 		// Wait for the indexer to cycle once
-		while (IsAutonomous() && indexSwitch.GetEvent() != kEventOpened)
+		while (IsAutonomous() && indexerSwitch.GetEvent() != kEventOpened)
 		{
 			Wait(0.02);
-			indexSwitch.Update();
+			indexerSwitch.Update();
 		}
 
 		indexerMotor.Set(0.0);
@@ -177,8 +173,8 @@ public:
 
 		// Read twice to make sure there are no false events
 		// due to a comparison against a default initial value.
-		indexSwitch.Update();
-		indexSwitch.Update();
+		indexerSwitch.Update();
+		indexerSwitch.Update();
 
 		shooterMotor.Set(SHOOTER_FWD);
 
@@ -190,6 +186,8 @@ public:
 		{
 			DoAutonomousShootOneDisk();
 		}
+		
+		shooterMotor.Set(0.0f);
 
 		// Move the robot to a position closer to out feeder station 
 		//		DoAutonomousMoveStep(&m_autoForward[0], "Backing up...");
@@ -216,11 +214,6 @@ public:
 				m_shiftCount--;
 			}
 		}
-	}
-
-	void HandleDriverInputsAutomatic(void)
-	{
-		// Placeholder for automatic transmission code
 	}
 	
 	void HandleArmInputs(void)
@@ -294,66 +287,32 @@ public:
 			m_jogTimerRunning = false;
 		}
 
-		if (gamepad.GetEvent(BUTTON_CLAW_1_LOCKED) == kEventClosed)
+		if (gamepad.GetEvent(BUTTON_GREEN_CLAW_LOCKED) == kEventClosed)
 		{
 			greenClaw.Set(DoubleSolenoid::kForward);
 		}
-		else if (gamepad.GetEvent(BUTTON_CLAW_1_UNLOCKED) == kEventClosed)
+		else if (gamepad.GetEvent(BUTTON_GREEN_CLAW_UNLOCKED) == kEventClosed)
 		{
 			greenClaw.Set(DoubleSolenoid::kReverse);
 		}
-		else if (gamepad.GetEvent(BUTTON_CLAW_2_LOCKED) == kEventClosed)
+		else if (gamepad.GetEvent(BUTTON_YELLOW_CLAW_LOCKED) == kEventClosed)
 		{
 			yellowClaw.Set(DoubleSolenoid::kForward);
 		}
-		else if (gamepad.GetEvent(BUTTON_CLAW_2_UNLOCKED) == kEventClosed)
+		else if (gamepad.GetEvent(BUTTON_YELLOW_CLAW_UNLOCKED) == kEventClosed)
 		{
 			yellowClaw.Set(DoubleSolenoid::kReverse);
 		}
 	}
 	
-	// This method reads two buttons on the gamepad: one for forward motion of
-	// the collector (to gather disks) and one for reverse motion (to enable
-	// removal of disks from the collector without having to shoot them). The
-	// buttons must be held down the entire time the collector is in operation.
-	// This is done to ensure that the collector is always in a known state
-	// (doing nothing) if the controls are released.
-	
-	void HandleCollectorInputs ()
-	{
-		if (false == m_shooterMotorRunning)
-		{
-			if (kEventClosed == gamepad.GetEvent(BUTTON_COLLECTOR_FWD))
-			{
-				collectorMotor.Set(COLLECTOR_FWD);
-				m_collectorMotorRunning = true;
-			}
-			else if (kEventOpened == gamepad.GetEvent(BUTTON_COLLECTOR_FWD))
-			{
-				collectorMotor.Set(0.0);
-				m_collectorMotorRunning = false;
-			}
-			else if (kEventClosed == gamepad.GetEvent(BUTTON_COLLECTOR_REV))
-			{
-				collectorMotor.Set(COLLECTOR_REV);
-				m_collectorMotorRunning = true;
-			}
-			else if (kEventOpened == gamepad.GetEvent(BUTTON_COLLECTOR_REV))
-			{
-				collectorMotor.Set(0.0);
-				m_collectorMotorRunning = false;
-			}
-		}
-	}
-	
 	void HandleShooterInputs()
 	{
-		if (indexSwitch.GetEvent() == kEventOpened)
+		if (indexerSwitch.GetEvent() == kEventOpened)
 		{
 			indexerMotor.Set(0.0);
 		}
 		
-		if (kEventClosed == gamepad.GetEvent(BUTTON_RUN_SHOOTER))
+		if (kEventClosed == gamepad.GetEvent(BUTTON_TOGGLE_SHOOTER))
 		{
 			if (!m_shooterMotorRunning)
 			{
@@ -366,6 +325,7 @@ public:
 				shooterMotor.Set(0.0);
 			}
 		}
+		
 		if (kEventClosed == gamepad.GetEvent(BUTTON_INDEXER))
 		{
 			indexerMotor.Set(INDEXER_FWD);
@@ -376,13 +336,11 @@ public:
 	{
 		if (gamepad.GetEvent(BUTTON_STOP_ALL) == kEventClosed)
 		{
-			collectorMotor.Set(0.0);
-			m_collectorMotorRunning = false;
-
 			shooterMotor.Set(0.0);
 			m_shooterMotorRunning  = false;
 
 			indexerMotor.Set(0.0);
+			
 			armMotor.Set(0.0);
 			
 			jogTimer.Stop();
@@ -394,18 +352,17 @@ public:
 	void UpdateStatusDisplays(void)
 	{
 		// Joystick values
-		SmartDashboard::PutNumber("stickX", stick.GetX());
-		SmartDashboard::PutNumber("stickY", stick.GetY());
-		SmartDashboard::PutBoolean("shift", stick2.GetState(BUTTON_SHIFT) ? kStateClosed : kStateOpen);
+//		SmartDashboard::PutNumber("stickX", stick.GetX());
+//		SmartDashboard::PutNumber("stickY", stick.GetY());
+//		SmartDashboard::PutBoolean("shift", stick2.GetState(BUTTON_SHIFT) ? kStateClosed : kStateOpen);
 		
 		// Shooter/Indexer values
-		SmartDashboard::PutBoolean("indexSwitch", indexSwitch.GetState() ? kStateClosed : kStateOpen);
+		SmartDashboard::PutBoolean("indexSwitch", indexerSwitch.GetState() ? kStateClosed : kStateOpen);
 		SmartDashboard::PutNumber("shooterMotor", shooterMotor.Get());
 		SmartDashboard::PutNumber("indexerMotor", indexerMotor.Get());
 
 		// Misc Motor Values
-		SmartDashboard::PutNumber("collectorMotor", collectorMotor.Get());
-		SmartDashboard::PutNumber("armMotor", armMotor.Get());
+//		SmartDashboard::PutNumber("armMotor", armMotor.Get());
 
 		// Arm position via potentiometer voltage (2.5 volts is center position)
 		float potVal = potentiometer.GetVoltage();
@@ -425,40 +382,32 @@ public:
 		SmartDashboard::PutNumber("Shift Count", m_shiftCount);
 		
 		// State viariables
-//		dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "CMR: %s SMR: %s JTR: %s",
-//			m_collectorMotorRunning ? "T" : "F",
+//		dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "SMR: %s JTR: %s",
 //			m_shooterMotorRunning ? "T" : "F",   
 //			m_jogTimerRunning ? "T" : "F");
 	}
 	
 	void OperatorControl(void)
 	{
-		int sanity = 0;
-		shifter.Set(DoubleSolenoid::kReverse);
-		
 		myRobot.SetSafetyEnabled(false);
 		
-//		gamepad.EnableButton(BUTTON_COLLECTOR_FWD);
-//		gamepad.EnableButton(BUTTON_COLLECTOR_REV);
-//		gamepad.EnableButton(BUTTON_SHOOTER);
-		gamepad.EnableButton(BUTTON_CLAW_1_LOCKED);
-		gamepad.EnableButton(BUTTON_CLAW_2_LOCKED);
-		gamepad.EnableButton(BUTTON_CLAW_1_UNLOCKED);
-		gamepad.EnableButton(BUTTON_CLAW_2_UNLOCKED);
+		gamepad.EnableButton(BUTTON_GREEN_CLAW_LOCKED);
+		gamepad.EnableButton(BUTTON_YELLOW_CLAW_LOCKED);
+		gamepad.EnableButton(BUTTON_GREEN_CLAW_UNLOCKED);
+		gamepad.EnableButton(BUTTON_YELLOW_CLAW_UNLOCKED);
 		gamepad.EnableButton(BUTTON_STOP_ALL);
 		gamepad.EnableButton(BUTTON_JOG_FWD);
 		gamepad.EnableButton(BUTTON_JOG_REV);
-		gamepad.EnableButton(BUTTON_RUN_SHOOTER);
+		gamepad.EnableButton(BUTTON_TOGGLE_SHOOTER);
 		gamepad.EnableButton(BUTTON_INDEXER);
 
 		stick2.EnableButton(BUTTON_SHIFT);
 
 		// Set inital states for all switches and buttons
 		gamepad.Update();
-		indexSwitch.Update();
+		indexerSwitch.Update();
 		greenClawLockSwitch.Update();
 		yellowClawLockSwitch.Update();
-		
 		stick2.Update();
 		
 		// Set initial states for all pneumatic actuators
@@ -472,11 +421,10 @@ public:
 		{
 			gamepad.Update();
 			stick2.Update();
-			indexSwitch.Update();
+			indexerSwitch.Update();
 			greenClawLockSwitch.Update();
 			yellowClawLockSwitch.Update();
 			
-//			HandleCollectorInputs();
 			HandleDriverInputsManual();
 			HandleArmInputs();
 			HandleShooterInputs();
@@ -484,12 +432,7 @@ public:
 			UpdateStatusDisplays();
 			
 			dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "G: %s", (GREEN_CLAW_LOCK_STATE ? "Locked" : "Unlocked"));
-			
 			dsLCD->PrintfLine(DriverStationLCD::kUser_Line5, "Y: %s", (YELLOW_CLAW_LOCK_STATE ? "Locked" : "Unlocked"));
-			
-			sanity++;
-			
-			dsLCD->PrintfLine(DriverStationLCD::kUser_Line6, "s:%d", sanity);
 			
 			dsLCD->UpdateLCD();
 			Wait(0.005);				// wait for a motor update time
