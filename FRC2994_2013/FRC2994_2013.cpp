@@ -58,6 +58,7 @@ class RobotDemo : public SimpleRobot
 	bool m_shooterMotorRunning;
 	bool m_jogTimerRunning;
 	int  m_shiftCount;
+	float m_previousPot;
 	
 	DriverStationLCD *dsLCD;
 
@@ -468,7 +469,14 @@ public:
 		SmartDashboard::PutNumber("armMotor", armMotor.Get());
 
 		// Arm position via potentiometer voltage (2.5 volts is center position)
-		SmartDashboard::PutNumber("Potentiometer", potentiometer.GetVoltage());
+		float potVal = potentiometer.GetVoltage();
+		// Checks if there has been a significant enough change in the value of
+		// the arm potentiometer to warrant sending the data to the dashboard.
+		if (absolute((m_previousPot - potVal)) > POT_EPSILON)
+		{
+			SmartDashboard::PutNumber("Potentiometer", potentiometer.GetVoltage());
+			m_previousPot = potVal;
+		}
 		
 		// Claw lock states
 		SmartDashboard::PutBoolean("Green Claw State", GREEN_CLAW_LOCK_STATE);
@@ -534,7 +542,7 @@ public:
 			HandleArmInputs();
 			HandleShooterInputs();
 			HandleResetButton();
-//			UpdateStatusDisplays();
+			UpdateStatusDisplays();
 			
 			dsLCD->PrintfLine(DriverStationLCD::kUser_Line4, "G: %s", (GREEN_CLAW_LOCK_STATE ? "Locked" : "Unlocked"));
 			
