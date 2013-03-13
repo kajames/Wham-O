@@ -65,13 +65,13 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 // Define the target platfomr we are building for. We need this
 // because the hardware on Plyboy, WhamO-1 and WhamO-2 are 
 // all different from one another
-//#define PLYBOY
+#define PLYBOY
 //#define WHAMO1
-#define WHAMO2
+//#define WHAMO2
 
 #ifdef PLYBOY
 #define NAME "Plyboy"
-#define LEFT_FRONT_DRIVE_MOTOR Jaguar
+#define LEFT_DRIVE_MOTOR Jaguar
 #define RIGHT_DRIVE_MOTOR Jaguar
 #define COLLECTOR_MOTOR_CONTROLLER Jaguar
 #define INDEXER_MOTOR_CONTROLLER Jaguar
