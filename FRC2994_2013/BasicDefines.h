@@ -62,7 +62,10 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 
 // Define the target platfomr we are building for. We need this
 // because the hardware on Plyboy, WhamO-1 and WhamO-2 are 
-// all different from one another
+// all different from one another.
+// WHAMO1 is the competition bot
+// WHAMO2 is the test bot
+// PLYBOY is our development platform
 //#define PLYBOY
 #define WHAMO1
 //#define WHAMO2
