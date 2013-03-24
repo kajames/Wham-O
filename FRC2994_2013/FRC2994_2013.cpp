@@ -203,8 +203,8 @@ public:
 	// which shifts the gearbox (press and hold)
 	void HandleDriverInputsManual(void)
 	{
-		myRobot.ArcadeDrive(stick.GetX(), stick.GetY());
-		if(kEventClosed == stick2.GetEvent(BUTTON_SHIFT))
+		myRobot.ArcadeDrive(stick);
+		if(kEventOpened == stick2.GetEvent(BUTTON_SHIFT))
 		{
 			if (m_shiftCount)
 			{
@@ -213,7 +213,7 @@ public:
 				m_shiftCount--;
 			}
 		}
-		else if(kEventOpened == stick2.GetEvent(BUTTON_SHIFT))
+		else if(kEventClosed == stick2.GetEvent(BUTTON_SHIFT))
 		{
 			if (m_shiftCount)
 			{
