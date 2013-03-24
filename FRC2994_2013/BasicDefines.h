@@ -53,7 +53,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define MAX_SHIFTS 50
 
 // Motor controller settings
-#define INDEXER_FWD 0.85
+#define INDEXER_FWD 1.00
+
 #define SHOOTER_FWD 1.0
 #define ARM_DESCEND 0.2
 #define ARM_CLIMB -1.0
