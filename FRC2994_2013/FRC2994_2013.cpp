@@ -169,7 +169,7 @@ public:
 		indexerMotor.Set(0.0);
 
 		// Let the shooter motor get back up to full speed
-		Wait(1.15);	
+		Wait(RE_SPINUP_TIME);	
 	}
 
 	void Autonomous(void)
