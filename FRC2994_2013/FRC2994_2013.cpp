@@ -93,7 +93,7 @@ public:
 		dsLCD = DriverStationLCD::GetInstance();
 		dsLCD->Clear();
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "2013 " NAME);
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line2, __DATE__ " "__TIME__);
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line2, __DATE__ " " __TIME__);
 		
 #ifdef WHAMO1
 		myRobot.SetInvertedMotor(RobotDrive::kRearLeftMotor, true); 
