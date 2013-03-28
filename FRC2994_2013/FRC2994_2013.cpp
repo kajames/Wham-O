@@ -209,7 +209,12 @@ public:
 			if (m_shiftCount)
 			{
 				// Shift into high gear.
-				shifter.Set(DoubleSolenoid::kReverse);
+				shifter.Set(
+				#ifdef WHAMO1
+								DoubleSolenoid::kForward);
+				#else
+								DoubleSolenoid::kReverse);
+				#endif
 				m_shiftCount--;
 			}
 		}
@@ -218,7 +223,12 @@ public:
 			if (m_shiftCount)
 			{
 				// Shift into low gear.
-				shifter.Set(DoubleSolenoid::kForward);
+				shifter.Set(
+				#ifdef WHAMO1
+								DoubleSolenoid::kReverse);
+				#else
+								DoubleSolenoid::kForward);
+				#endif
 				m_shiftCount--;
 			}
 		}
@@ -233,7 +243,7 @@ public:
 	{
 		if (!m_jogTimerRunning)
 		{
-			// Climb
+			// Climb (fast)
 			if (gamepad.GetLeftY() < -0.1)
 			{
 				if (potentiometer.GetVoltage() > CLIMB_LIMIT)
@@ -245,7 +255,7 @@ public:
 					armMotor.Set(0.0);
 				}
 			}
-			// Descend
+			// Descend (fast)
 			else if (gamepad.GetLeftY() > 0.1)
 			{
 				if (potentiometer.GetVoltage() < DESCEND_LIMIT)
@@ -257,12 +267,12 @@ public:
 					armMotor.Set(0.0);
 				}
 			}
-			// Climb
+			// Climb ("jog")
 			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kUp))
 			{
 				if (potentiometer.GetVoltage() > CLIMB_LIMIT)
 				{
-					armMotor.Set(ARM_CLIMB);
+					armMotor.Set(ARM_CLIMB_JOG);
 					jogTimer.Start();
 					jogTimer.Reset();
 					m_jogTimerRunning = true;
@@ -272,12 +282,12 @@ public:
 					armMotor.Set(0.0);
 				}
 			}
-			// Descend
+			// Descend ("jog")
 			else if (kEventClosed == gamepad.GetDPadEvent(Gamepad::kDown))
 			{
 				if (potentiometer.GetVoltage() < DESCEND_LIMIT)
 				{
-					armMotor.Set(ARM_DESCEND);
+					armMotor.Set(ARM_DESCEND_JOG);
 					jogTimer.Start();
 					jogTimer.Reset();
 					m_jogTimerRunning = true;
@@ -449,7 +459,13 @@ public:
 		stick2.Update();
 		
 		// Set initial states for all pneumatic actuators
-		shifter.Set(DoubleSolenoid::kReverse);
+		shifter.Set(
+#ifdef WHAMO1
+				DoubleSolenoid::kForward);
+#else
+				DoubleSolenoid::kReverse);
+#endif
+		
 		greenClaw.Set(DoubleSolenoid::kReverse);
 		yellowClaw.Set(DoubleSolenoid::kReverse);
 
@@ -457,6 +473,7 @@ public:
 		
 		while (IsOperatorControl())
 		{
+			static int sanity = 0;
 			gamepad.Update();
 			stick2.Update();
 			indexerSwitch.Update();
@@ -476,6 +493,9 @@ public:
 //			
 //			dsLCD->UpdateLCD();
 			Wait(0.005);				// wait for a motor update time
+			sanity++;
+			
+			dsLCD->PrintfLine(DriverStationLCD::kUser_Line3, "%d", sanity);
 		}
 	}
 	

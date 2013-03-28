@@ -71,7 +71,7 @@ void EGamepad::Update()
 	}
 	
 	Gamepad::DPadDirection dpadDirection = GetDPad();
-	
+	  
 	// By definition, only one contact on the dpad, at most, can be pressed at
 	// any one time. So, we loop through the table using a newState of "open"
 	// for every entry except the one (if any) that is being pressed. Note that

@@ -57,6 +57,8 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 
 #define SHOOTER_FWD 1.0
 #define ARM_DESCEND 0.2
+#define ARM_DESCEND_JOG 0.3
+#define ARM_CLIMB_JOG -0.3
 #define ARM_CLIMB -1.0
 #define CLIMB_LIMIT .5f
 #define DESCEND_LIMIT 4.5f
@@ -208,6 +210,6 @@ const step_speed m_autoForward[NUM_AUTONOMOUS_STEPS] =
 #define RE_SPINUP_TIME 1.15
 // A constant defining how significant a change in the value of the arm potentiometer
 // has to be for it to be sent to the driver station.
-#define POT_EPSILON 0.1f
+#define POT_EPSILON 0.2f
 
 #endif
