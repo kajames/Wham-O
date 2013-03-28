@@ -89,6 +89,7 @@ public:
 		m_shooterMotorRunning = false;
 		m_jogTimerRunning     = false;
 		m_shiftCount          = MAX_SHIFTS;
+		SmartDashboard::PutNumber("Shift Count", m_shiftCount);
 		
 		dsLCD = DriverStationLCD::GetInstance();
 		dsLCD->Clear();
@@ -156,6 +157,7 @@ public:
 		indexerSwitch.Update();
 
 		indexerMotor.Set(INDEXER_FWD);
+		SmartDashboard::PutNumber("indexerMotor", INDEXER_FWD);
 
 		// Wait for the indexer to cycle once (to prevent an unlikely but
 		// possible infinite loop that would prevent us from going into
@@ -167,6 +169,7 @@ public:
 		}
 
 		indexerMotor.Set(0.0);
+		SmartDashboard::PutNumber("indexerMotor", 0.0);
 
 		// Let the shooter motor get back up to full speed
 		Wait(1.15);	
@@ -182,6 +185,7 @@ public:
 		indexerSwitch.Update();
 
 		shooterMotor.Set(SHOOTER_FWD);
+		SmartDashboard::PutNumber("shooterMotor", SHOOTER_FWD);
 
 		// Wait for the shooter motor to spin up to speed
 		Wait(2.5);
@@ -193,6 +197,7 @@ public:
 		}
 		
 		shooterMotor.Set(0.0f);
+		SmartDashboard::PutNumber("shooterMotor", 0.0);
 
 		// Move the robot to a position closer to our feeder station 
 		// (commented out until we get a chance to actually try it)
@@ -211,6 +216,7 @@ public:
 				// Shift into high gear.
 				shifter.Set(DoubleSolenoid::kReverse);
 				m_shiftCount--;
+				SmartDashboard::PutNumber("Shift Count", m_shiftCount);
 			}
 		}
 		else if(kEventClosed == stick2.GetEvent(BUTTON_SHIFT))
@@ -220,6 +226,7 @@ public:
 				// Shift into low gear.
 				shifter.Set(DoubleSolenoid::kForward);
 				m_shiftCount--;
+				SmartDashboard::PutNumber("Shift Count", m_shiftCount);
 			}
 		}
 	}
@@ -304,21 +311,25 @@ public:
 		{
 			// lock the green claw
 			greenClaw.Set(DoubleSolenoid::kForward);
+			SmartDashboard::PutBoolean("Green Claw State", GREEN_CLAW_LOCK_STATE);
 		}
 		else if (gamepad.GetEvent(BUTTON_GREEN_CLAW_UNLOCKED) == kEventClosed)
 		{
 			// unlock the green claw
 			greenClaw.Set(DoubleSolenoid::kReverse);
+			SmartDashboard::PutBoolean("Green Claw State", GREEN_CLAW_LOCK_STATE);
 		}
 		else if (gamepad.GetEvent(BUTTON_YELLOW_CLAW_LOCKED) == kEventClosed)
 		{
 			// lock the yellow claw
 			yellowClaw.Set(DoubleSolenoid::kForward);
+			SmartDashboard::PutBoolean("Yellow Claw State", YELLOW_CLAW_LOCK_STATE);
 		}
 		else if (gamepad.GetEvent(BUTTON_YELLOW_CLAW_UNLOCKED) == kEventClosed)
 		{
 			// unlock the yellow claw
 			yellowClaw.Set(DoubleSolenoid::kReverse);
+			SmartDashboard::PutBoolean("Yellow Claw State", YELLOW_CLAW_LOCK_STATE);
 		}
 	}
 	
@@ -331,7 +342,9 @@ public:
 	{
 		if (indexerSwitch.GetEvent() == kEventOpened)
 		{
+			SmartDashboard::PutBoolean("indexSwitch", false);
 			indexerMotor.Set(0.0);
+			SmartDashboard::PutNumber("indexerMotor", 0.0);
 		}
 		
 		if (kEventClosed == gamepad.GetEvent(BUTTON_TOGGLE_SHOOTER))
@@ -340,17 +353,21 @@ public:
 			{
 				m_shooterMotorRunning = true;
 				shooterMotor.Set(SHOOTER_FWD);
+				SmartDashboard::PutNumber("shooterMotor", SHOOTER_FWD);
 			}
 			else
 			{
 				m_shooterMotorRunning = false;
 				shooterMotor.Set(0.0);
+				SmartDashboard::PutNumber("shooterMotor", 0.0);
 			}
 		}
 		
 		if (kEventClosed == gamepad.GetEvent(BUTTON_INDEXER))
 		{
+			SmartDashboard::PutBoolean("indexSwitch", true);
 			indexerMotor.Set(INDEXER_FWD);
+			SmartDashboard::PutNumber("indexerMotor", INDEXER_FWD);
 		}
 	}
 	
@@ -363,9 +380,11 @@ public:
 		if (gamepad.GetEvent(BUTTON_STOP_ALL) == kEventClosed)
 		{
 			shooterMotor.Set(0.0);
+			SmartDashboard::PutNumber("shooterMotor", 0.0);
 			m_shooterMotorRunning  = false;
 
 			indexerMotor.Set(0.0);
+			SmartDashboard::PutNumber("indexerMotor", INDEXER_FWD);
 			
 			armMotor.Set(0.0);
 			
@@ -387,9 +406,9 @@ public:
 //		SmartDashboard::PutBoolean("shift", stick2.GetState(BUTTON_SHIFT) ? kStateClosed : kStateOpen);
 		
 		// Shooter/Indexer values
-		SmartDashboard::PutBoolean("indexSwitch", indexerSwitch.GetState() ? kStateClosed : kStateOpen);
-		SmartDashboard::PutNumber("shooterMotor", shooterMotor.Get());
-		SmartDashboard::PutNumber("indexerMotor", indexerMotor.Get());
+//		SmartDashboard::PutBoolean("indexSwitch", indexerSwitch.GetState() ? kStateClosed : kStateOpen);
+//		SmartDashboard::PutNumber("shooterMotor", shooterMotor.Get());
+//		SmartDashboard::PutNumber("indexerMotor", indexerMotor.Get());
 
 		// Misc Motor Values (as with the joystick values above, commented out to reduce network
 		// traffic to the dashboard)
@@ -408,11 +427,11 @@ public:
 		}
 		
 		// Claw lock states
-		SmartDashboard::PutBoolean("Green Claw State", GREEN_CLAW_LOCK_STATE);
-		SmartDashboard::PutBoolean("Yellow Claw State", YELLOW_CLAW_LOCK_STATE);
+//		SmartDashboard::PutBoolean("Green Claw State", GREEN_CLAW_LOCK_STATE);
+//		SmartDashboard::PutBoolean("Yellow Claw State", YELLOW_CLAW_LOCK_STATE);
 		
 		// Pneumatic shifter count
-		SmartDashboard::PutNumber("Shift Count", m_shiftCount);
+//		SmartDashboard::PutNumber("Shift Count", m_shiftCount);
 		
 		// State viariables. This is basically debug and is commented out, once again to reduce
 		// network traffic.
@@ -451,7 +470,9 @@ public:
 		// Set initial states for all pneumatic actuators
 		shifter.Set(DoubleSolenoid::kReverse);
 		greenClaw.Set(DoubleSolenoid::kReverse);
+		SmartDashboard::PutBoolean("Green Claw State", GREEN_CLAW_LOCK_STATE);
 		yellowClaw.Set(DoubleSolenoid::kReverse);
+		SmartDashboard::PutBoolean("Yellow Claw State", YELLOW_CLAW_LOCK_STATE);
 
 		compressor.Start ();
 		
